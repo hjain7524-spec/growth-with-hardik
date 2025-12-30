@@ -14,7 +14,7 @@ import {
   Settings,
   Target
 } from 'lucide-react';
-import { Service, PricingPlan, ProcessStep } from './types';
+import { Service, PricingPlan, ProcessStep, Testimonial } from './types';
 
 export const BRAND_NAME = "Growth with Hardik";
 export const BRAND_EMAIL = "growthwithhardik@gmail.com";
@@ -122,6 +122,33 @@ export const PROCESS_STEPS: ProcessStep[] = [
     number: '04',
     title: 'Optimize',
     description: 'Continuous testing and refining to maximize reach and conversion.'
+  }
+];
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    id: 't1',
+    content: 'Hardik helped us streamline our content and improve consistency across platforms.',
+    author: 'Founder',
+    role: 'The Himadari Foundation'
+  },
+  {
+    id: 't2',
+    content: 'Hardik helped me build a structured content strategy that supported my growth to over 200K followers within 12 months.',
+    author: 'Tanya Saharawat',
+    role: 'Yoga Creator'
+  },
+  {
+    id: 't3',
+    content: 'Our engagement metrics improved significantly within the first 60 days of working together.',
+    author: 'Creator',
+    role: 'Lifestyle & Tech'
+  },
+  {
+    id: 't4',
+    content: 'High-production value and a systematic approach to growth that actually delivers.',
+    author: 'Director',
+    role: 'Apex Digital Agency'
   }
 ];
 

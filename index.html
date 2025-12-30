@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -22,6 +21,13 @@
         .dark .apple-blur {
             background-color: rgba(0, 0, 0, 0.72);
         }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 <script type="importmap">
 {
@@ -36,7 +42,6 @@
 </script>
 </head>
 <body class="antialiased overflow-x-hidden">
-   <script type="module" src="/index.tsx"></script>
- <div id="root"></div>
+    <div id="root"></div>
 </body>
 </html>
