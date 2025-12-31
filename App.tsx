@@ -379,9 +379,27 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    try {
+      const response = await fetch("https://formspree.io/f/xnjqwnkb", {
+        method: "POST",
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        setIsSubmitted(true);
+        form.reset();
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
   };
 
   const handleScrollProgress = (e: React.UIEvent<HTMLDivElement>, setter: (idx: number) => void) => {
