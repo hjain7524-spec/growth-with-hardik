@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView, animate, useMotionValue, useTransform } from 'framer-motion';
 import { 
@@ -34,8 +35,8 @@ import {
 } from './constants';
 import { Service } from './types';
 
-// Provided Brand Logo URL
-const BRAND_LOGO_URL = "https://files.oaiusercontent.com/file-VnNsh23J9TjY4L8G9E9X5P?se=2025-01-30T10%3A58%3A23Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D73983262-e192-414e-9893-68f773347f3b.webp&sig=G06pD1y/yKkO7o2V5UvYp5/0y5P%2Bv4Kj5Y5UvYp5/0y5P%3D";
+// The logo is now rendered as a clean SVG component for maximum quality
+const BRAND_LOGO_URL = "logo.png";
 
 type ViewType = 'home' | 'services';
 
@@ -43,23 +44,60 @@ type ViewType = 'home' | 'services';
 const appleTransition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 const appleSpring = { type: "spring", stiffness: 100, damping: 20, mass: 1 };
 
+const GrowthLogoSVG = () => (
+  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-1.5">
+    {/* Bar Chart Section */}
+    <rect x="38" y="52" width="6.5" height="15" rx="1" fill="#0EA5E9"/>
+    <rect x="47.5" y="42" width="6.5" height="25" rx="1" fill="white"/>
+    <rect x="57" y="32" width="6.5" height="35" rx="1" fill="#0EA5E9"/>
+    
+    {/* Sweeping Growth Arrow Swoosh */}
+    <path 
+      d="M30 63.5C35 73 46 76 69.5 62" 
+      stroke="white" 
+      strokeWidth="4" 
+      strokeLinecap="round" 
+    />
+    <path 
+      d="M69.5 62L64.5 57.5L71.5 63.5L69.5 62Z" 
+      fill="white" 
+      stroke="white" 
+      strokeWidth="1.5" 
+      strokeLinejoin="round" 
+    />
+
+    {/* Rocket - Refined to match the provided inspiration */}
+    <g transform="translate(32, 25) rotate(-35)">
+      {/* Exhaust plume */}
+      <path 
+        d="M4 14L0 22L8 22L4 14Z" 
+        fill="white" 
+        fillOpacity="0.7"
+      />
+      {/* Body */}
+      <path 
+        d="M4 0C4 0 8 1.5 8 6L7 14H1L0 6C0 1.5 4 0 4 0Z" 
+        fill="#0EA5E9" 
+      />
+      {/* Tail Fins */}
+      <path d="M1 12L-2 15V17H1L2 14" fill="#0EA5E9" />
+      <path d="M7 12L10 15V17H7L6 14" fill="#0EA5E9" />
+      {/* Small details */}
+      <circle cx="4" cy="5" r="0.8" fill="white" fillOpacity="0.5" />
+    </g>
+  </svg>
+);
+
 const BrandLogoImage = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
   const sizeClasses = {
-    sm: "w-8 h-8 md:w-10 md:h-10 p-1",
-    md: "w-10 h-10 md:w-14 md:h-14 p-1.5",
-    lg: "w-32 h-32 md:w-64 md:h-64 p-4 md:p-6"
+    sm: "w-8 h-8 md:w-10 md:h-10",
+    md: "w-10 h-10 md:w-14 md:h-14",
+    lg: "w-32 h-32 md:w-64 md:h-64"
   };
 
   return (
-    <div className={`${sizeClasses[size]} relative rounded-full border border-gray-100 bg-white overflow-hidden shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center`}>
-      <img 
-        src={BRAND_LOGO_URL} 
-        alt={BRAND_NAME} 
-        className="relative z-10 w-full h-full object-contain"
-        onError={(e) => {
-          e.currentTarget.src = `https://ui-avatars.com/api/?name=H&background=000&color=fff&size=512`;
-        }}
-      />
+    <div className={`${sizeClasses[size]} relative rounded-full bg-black overflow-hidden shrink-0 shadow-sm flex items-center justify-center`}>
+      <GrowthLogoSVG />
     </div>
   );
 };
@@ -85,13 +123,10 @@ const Counter = ({ target, suffix = "", duration = 2 }: { target: number, suffix
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const ref = useRef(null);
-  // Reduced margin to ensure trigger on smaller viewports
   const isInView = useInView(ref, { once: true, margin: "-20px" });
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    // For mobile, we trigger animation immediately on mount (simulating DOMContentLoaded load trigger)
-    // while keeping isInView for desktop/larger screens.
     if (isInView || window.innerWidth < 768) {
       const controls = animate(count, target, { duration });
       return controls.stop;
@@ -384,7 +419,6 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
     const el = document.querySelector('#contact');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-      // Focus the first input after a short delay to allow scroll to complete
       setTimeout(() => {
         const input = document.querySelector('input[name="name"]') as HTMLInputElement;
         input?.focus({ preventScroll: true });
@@ -419,7 +453,7 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
     const container = e.currentTarget;
     const scrollPosition = container.scrollLeft;
     const itemWidth = container.children[0].clientWidth;
-    const gap = 24; // Current mobile gap
+    const gap = 24;
     const index = Math.round(scrollPosition / (itemWidth + gap));
     setter(index);
   };
@@ -709,7 +743,6 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
               ))}
             </div>
           </div>
-          {/* Mobile Dot Indicators */}
           <div className="flex justify-center gap-1.5 mt-4 md:hidden">
             {PROCESS_STEPS.map((_, i) => (
               <div key={i} className={`h-1 rounded-full transition-all duration-300 ${activeProcessIdx === i ? 'w-5 bg-blue-600' : 'w-1 bg-gray-200'}`} />
@@ -760,14 +793,12 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
                       : 'bg-white border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] text-gray-900'
                   }`}
                 >
-                  {/* Desktop/Tablet Floating Pill */}
                   {plan.highlighted && (
                     <div className="hidden md:block absolute -top-3.5 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[9px] md:text-[10px] font-black px-4 md:px-5 py-1.5 md:py-2 rounded-full uppercase tracking-[0.2em] shadow-xl shadow-blue-500/30 whitespace-nowrap">
                       Recommended Choice
                     </div>
                   )}
                   <div className="mb-5 md:mb-10">
-                    {/* Mobile Inline Pill */}
                     {plan.highlighted && (
                       <div className="inline-block md:hidden bg-blue-600 text-white text-[7px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 leading-none">
                         Recommended
@@ -802,7 +833,6 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
               ))}
             </div>
           </div>
-          {/* Mobile Dot Indicators */}
           <div className="flex justify-center gap-1.5 mt-4 md:hidden">
             {PRICING_PLANS.map((_, i) => (
               <div key={i} className={`h-1 rounded-full transition-all duration-300 ${activePricingIdx === i ? 'w-5 bg-blue-600' : 'w-1 bg-gray-200'}`} />
@@ -868,7 +898,6 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
               ))}
             </div>
           </div>
-          {/* Mobile Dot Indicators */}
           <div className="flex justify-center gap-1.5 mt-2 md:hidden">
             {TESTIMONIALS.map((_, i) => (
               <div key={i} className={`h-1 rounded-full transition-all duration-300 ${activeFeedbackIdx === i ? 'w-5 bg-blue-600' : 'w-1 bg-gray-200'}`} />
@@ -892,21 +921,21 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
               <div className="flex items-center gap-4 md:gap-8 group">
                 <div className="w-12 h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Mail size={22} className="md:w-8 md:h-8" /></div>
                 <div>
-                  <p className="text-[8px] md:text-[11px] text-gray-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Direct Line</p>
+                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Direct Line</p>
                   <a href={`mailto:${BRAND_EMAIL}`} className="text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight truncate max-w-[240px] md:max-w-none block">{BRAND_EMAIL}</a>
                 </div>
               </div>
               <div className="flex items-center gap-4 md:gap-8 group">
                 <div className="w-12 h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Instagram size={22} className="md:w-8 md:h-8" /></div>
                 <div>
-                  <p className="text-[8px] md:text-[11px] text-gray-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Social Feed</p>
+                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Social Feed</p>
                   <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight">{INSTAGRAM_HANDLE}</a>
                 </div>
               </div>
               <div className="flex items-center gap-4 md:gap-8 group">
                 <div className="w-12 h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-green-500 group-hover:border-green-400 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><MessageCircle size={22} className="md:w-8 md:h-8" /></div>
                 <div>
-                  <p className="text-[8px] md:text-[11px] text-gray-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Instant Chat</p>
+                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Instant Chat</p>
                   <a href={`https://wa.me/91${BRAND_PHONE}?text=${encodeURIComponent("Hi, I came across your website and would like to know more about your services.")}`} target="_blank" rel="noreferrer" className="text-base md:text-3xl font-bold hover:text-green-400 transition-colors tracking-tight">WhatsApp Us</a>
                 </div>
               </div>
@@ -1048,59 +1077,37 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
   );
 };
 
-const Footer = ({ onViewChange, onShowPrivacy, onShowTerms }: { onViewChange: (view: ViewType) => void, onShowPrivacy: () => void, onShowTerms: () => void }) => {
-  const handleNavClick = (view: ViewType, href?: string) => {
-    onViewChange(view);
-    if (href) {
-      setTimeout(() => {
-        const el = document.querySelector(href);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-          if (href === '#contact') {
-            setTimeout(() => {
-              const input = document.querySelector('input[name="name"]') as HTMLInputElement;
-              input?.focus({ preventScroll: true });
-            }, 800);
-          }
-        }
-      }, 100);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
+// Footer component provides essential branding and navigation links at the bottom of the page
+const Footer = ({ 
+  onViewChange, 
+  onShowPrivacy, 
+  onShowTerms 
+}: { 
+  onViewChange: (view: ViewType) => void, 
+  onShowPrivacy: () => void, 
+  onShowTerms: () => void 
+}) => {
   return (
-    <footer className="py-10 md:py-24 border-t border-gray-100 px-5 md:px-6 bg-white">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-20">
-        <div className="md:col-span-2">
-          <div className="mb-6 md:mb-12"><Logo onClick={() => { onViewChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} /></div>
-          <p className="text-gray-500 text-sm md:text-xl max-w-sm leading-relaxed mb-6 md:mb-12 font-medium">
-            Premium digital solutions for standard creators. Building brands that convert followers into customers.
+    <footer className="bg-white py-12 md:py-20 border-t border-gray-100 px-5 md:px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-12">
+          <Logo onClick={() => { onViewChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+          
+          <div className="flex flex-wrap gap-x-10 gap-y-4">
+            <button onClick={() => { onViewChange('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">Services</button>
+            <button onClick={onShowPrivacy} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">Privacy Policy</button>
+            <button onClick={onShowTerms} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">Terms of Service</button>
+          </div>
+        </div>
+        
+        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-50 gap-4">
+          <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">
+            &copy; {new Date().getFullYear()} {BRAND_NAME} Agency. Crafted for results.
           </p>
-          <div className="flex gap-3 md:gap-8">
-            <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="w-10 h-10 md:w-16 md:h-16 bg-gray-50 rounded-lg md:rounded-2xl flex items-center justify-center hover:bg-black hover:text-white transition-all shadow-sm touch-manipulation"><Instagram size={18} className="md:w-8 md:h-8" /></a>
-            <a href={`mailto:${BRAND_EMAIL}`} className="w-10 h-10 md:w-16 md:h-16 bg-gray-50 rounded-lg md:rounded-2xl flex items-center justify-center hover:bg-black hover:text-white transition-all shadow-sm touch-manipulation"><Mail size={18} className="md:w-8 md:h-8" /></a>
+          <div className="flex gap-6">
+            <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-gray-300 hover:text-blue-600 transition-colors"><Instagram size={16} /></a>
+            <a href={`mailto:${BRAND_EMAIL}`} className="text-gray-300 hover:text-blue-600 transition-colors"><Mail size={16} /></a>
           </div>
-        </div>
-        <div className="grid grid-cols-2 md:block gap-8">
-          <div>
-            <h4 className="font-black mb-4 md:mb-10 uppercase tracking-[0.2em] text-[8px] md:text-[10px] text-gray-400">Company</h4>
-            <ul className="space-y-2 md:space-y-6">
-              <li><button onClick={() => handleNavClick('services')} className="text-sm md:text-xl font-bold text-gray-600 hover:text-black text-left touch-manipulation">Services</button></li>
-              <li><button onClick={() => handleNavClick('home', '#pricing')} className="text-sm md:text-xl font-bold text-gray-600 hover:text-black text-left touch-manipulation">Pricing</button></li>
-              <li><button onClick={() => handleNavClick('home', '#about')} className="text-sm md:text-xl font-bold text-gray-600 hover:text-black text-left touch-manipulation">About</button></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black mb-4 md:mb-10 uppercase tracking-[0.2em] text-[8px] md:text-[10px] text-gray-400">Legal</h4>
-            <ul className="space-y-2 md:space-y-6">
-              <li><button onClick={onShowPrivacy} className="text-sm md:text-xl font-bold text-gray-600 hover:text-black text-left touch-manipulation">Privacy Policy</button></li>
-              <li><button onClick={onShowTerms} className="text-sm md:text-xl font-bold text-gray-600 hover:text-black text-left touch-manipulation">Terms & Conditions</button></li>
-            </ul>
-          </div>
-        </div>
-        <div className="pt-6 md:pt-0 border-t md:border-t-0 border-gray-100 flex flex-col justify-end">
-          <div className="text-gray-400 text-[8px] md:text-[10px] font-black uppercase tracking-widest">© {new Date().getFullYear()} Growth Studio.</div>
         </div>
       </div>
     </footer>
