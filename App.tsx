@@ -1,6 +1,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView, animate, useMotionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useInView, animate, useMotionValue, useTransform, useScroll } from 'framer-motion';
+import { TrustMarquee } from './TrustMarquee';
+import { ProblemSection } from './ProblemSection';
+import { GrowthSystem } from './GrowthSystem';
+import { TestimonialsSection } from './TestimonialsSection';
+import { LeadQualificationForm } from './LeadQualificationForm';
+import { SmartLeadCaptureModal } from './SmartLeadCaptureModal';
 import { 
   ArrowRight, 
   Menu, 
@@ -13,14 +19,21 @@ import {
   ArrowUpRight,
   ArrowLeft,
   Check,
-  TrendingUp,
-  BarChart3,
   UserCheck,
   MessageCircle,
   Smartphone,
   AtSign,
   MoveHorizontal,
-  Users
+  TrendingUp,
+  BarChart3,
+  Users,
+  Zap,
+  Star,
+  Eye,
+  Globe,
+  Activity,
+  ArrowUp,
+  Play
 } from 'lucide-react';
 import { 
   BRAND_NAME, 
@@ -154,7 +167,6 @@ const Navbar = ({ activeView, onViewChange }: { activeView: ViewType, onViewChan
     { name: 'Services', view: 'services' as ViewType },
     { name: 'Pricing', href: '#pricing', view: 'home' as ViewType },
     { name: 'Process', href: '#process', view: 'home' as ViewType },
-    { name: 'About', href: '#about', view: 'home' as ViewType },
   ];
 
   const handleNavClick = (link: typeof navLinks[0]) => {
@@ -410,6 +422,20 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
   const [activePricingIdx, setActivePricingIdx] = useState(0);
   const [activeFeedbackIdx, setActiveFeedbackIdx] = useState(0);
   
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Subtle Apple-style multi-plane parallax transforms
+  const backgroundY1 = useTransform(scrollYProgress, [0, 1], ["0%", "35%"]);
+  const backgroundY2 = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
+  const backgroundScale1 = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const backgroundScale2 = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.2]);
+  
   const handleAuditClick = () => {
     const message = encodeURIComponent("Hi, I’m interested in a free growth audit for my brand.");
     window.open(`https://wa.me/91${BRAND_PHONE}?text=${message}`, '_blank');
@@ -460,296 +486,107 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
 
   return (
     <>
-      <section className="relative pt-20 pb-10 md:pt-48 md:pb-40 overflow-hidden px-5 md:px-6">
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+      <section ref={heroRef} className="relative pt-20 sm:pt-24 lg:pt-28 pb-8 lg:pb-12 overflow-hidden px-5 sm:px-6 md:px-8">
+        {/* Soft glowing background elements with subtle multi-layer parallax */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none overflow-hidden">
+          <motion.div 
+            style={{ y: backgroundY1, scale: backgroundScale1 }}
+            className="absolute -top-32 left-1/4 w-[500px] h-[500px] bg-blue-100/60 rounded-full blur-[140px] opacity-60 will-change-transform" 
+          />
+          <motion.div 
+            style={{ y: backgroundY2, scale: backgroundScale2 }}
+            className="absolute top-40 right-10 w-[450px] h-[450px] bg-indigo-100/50 rounded-full blur-[140px] opacity-50 will-change-transform" 
+          />
+          <motion.div 
+            style={{ y: backgroundY1 }}
+            className="absolute top-1/2 left-10 w-[300px] h-[300px] bg-purple-100/40 rounded-full blur-[120px] opacity-40 will-change-transform" 
+          />
+        </div>
+
+        <motion.div 
+          style={{ y: contentY, opacity: contentOpacity }}
+          className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10 will-change-transform"
+        >
+          {/* Social Proof Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 bg-gray-50 border border-gray-100 px-4 md:px-5 py-2 rounded-full text-[9px] md:text-xs font-black uppercase tracking-widest mb-6 md:mb-10 text-gray-500"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="inline-flex items-center gap-3 bg-gray-900/5 border border-gray-900/10 backdrop-blur-xl px-4 py-1.5 rounded-full mb-4 sm:mb-5"
           >
-            <Sparkles size={14} className="text-blue-600" />
-            <span>Scale your impact organically</span>
+            <div className="flex -space-x-2 overflow-hidden">
+              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Client 1" />
+              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Client 2" />
+              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Client 3" />
+              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Client 4" />
+            </div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-900">
+              <span className="flex text-amber-400">★★★★★</span>
+              <span>Trusted by 30+ Brands & Creators</span>
+            </div>
           </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-8xl font-black tracking-tight mb-5 md:mb-8 leading-[1.1] md:leading-[1.05]"
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[1.05] text-gray-950 mb-4 sm:mb-5"
           >
-            Grow your Instagram <br className="hidden md:block" />
-            with <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">content & AI</span>
+            Grow on Instagram. <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">Build a Brand People Remember.</span>
           </motion.h1>
 
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-sm md:text-2xl text-gray-400 max-w-2xl mx-auto mb-8 md:mb-14 leading-relaxed font-medium px-2 md:px-0"
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="text-lg sm:text-xl lg:text-2xl text-gray-500 font-medium leading-relaxed mb-6 sm:mb-8 max-w-2xl"
           >
-            We help creators and modern brands improve their reach by <span className="text-black font-bold border-b-2 border-blue-500 pb-0.5">200%</span> using performance-driven strategy.
+            We help creators and modern brands improve their reach by <span className="text-gray-950 font-extrabold border-b-2 border-blue-600 pb-0.5">200%</span> using well tested strategies.
           </motion.p>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-3 md:gap-5 justify-center items-center"
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto items-stretch sm:items-center justify-center"
           >
-            <button 
+            <button
               onClick={handleAuditClick}
-              className="w-full sm:w-auto group relative bg-black text-white px-8 md:px-12 py-4 md:py-5 rounded-full text-base md:text-xl font-black overflow-hidden transition-all hover:bg-gray-900 shadow-xl shadow-black/10 flex items-center justify-center gap-2 active:scale-95 touch-manipulation"
+              className="group relative bg-gray-950 text-white px-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-black transition-all duration-300 hover:bg-black hover:shadow-2xl hover:shadow-blue-500/15 flex items-center justify-center gap-3 active:scale-95 touch-manipulation"
             >
-              Free Growth Audit
-              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+              Book a Free Growth Audit
+              <ArrowRight className="group-hover:translate-x-1.5 transition-transform" size={20} />
             </button>
-            <button 
-              onClick={onViewServices}
-              className="w-full sm:w-auto px-8 py-3 md:py-5 rounded-full text-sm md:text-lg font-black text-gray-500 hover:text-black transition-colors inline-flex items-center justify-center gap-2 active:scale-95 touch-manipulation"
+
+            <button
+              onClick={() => {
+                const el = document.querySelector('#process') || document.querySelector('#pricing');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  onViewServices();
+                }
+              }}
+              className="px-8 py-4 sm:py-5 rounded-full text-base sm:text-lg font-bold text-gray-600 hover:text-gray-950 hover:bg-gray-100/80 border border-gray-200/80 transition-all flex items-center justify-center gap-2 active:scale-95 touch-manipulation"
             >
-              Explore Services <ChevronRight size={16} />
+              See Our Work <ChevronRight size={20} />
             </button>
           </motion.div>
-        </div>
-
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-[200px] md:w-[700px] h-[200px] md:h-[700px] bg-blue-50 rounded-full blur-[60px] md:blur-[160px] opacity-40 animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-[200px] md:w-[700px] h-[200px] md:h-[700px] bg-indigo-50 rounded-full blur-[60px] md:blur-[160px] opacity-40 animate-pulse delay-700"></div>
-        </div>
+        </motion.div>
       </section>
 
-      <section id="about" className="py-10 md:py-24 bg-gray-50 px-5 md:px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-20 items-center">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 40 }} 
-            whileInView={{ opacity: 1, scale: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }}
-            transition={appleTransition}
-            className="relative"
-          >
-            <div className="relative z-10">
-              <div className="absolute -inset-10 bg-blue-500/5 rounded-full blur-3xl animate-pulse -z-10"></div>
-              
-              <div className="relative group">
-                <img 
-                  src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?q=80&w=2070&auto=format&fit=crop" 
-                  alt="Hardik" 
-                  className="rounded-[2rem] md:rounded-[3.5rem] shadow-2xl grayscale group-hover:grayscale-0 transition-all duration-1000 w-full aspect-[4/5] object-cover border-4 md:border-8 border-white bg-white"
-                />
-                
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.5, x: 20 }}
-                  whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ 
-                    ...appleTransition, 
-                    delay: 0.5,
-                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                  animate={{ y: [0, -10, 0] }}
-                  className="absolute -top-3 -right-1 md:-top-6 md:-right-6 bg-white/80 backdrop-blur-xl p-3 md:p-5 rounded-xl md:rounded-3xl shadow-xl border border-white/20 z-20"
-                >
-                  <div className="flex items-center gap-2 md:gap-3">
-                    <div className="w-7 h-7 md:w-10 md:h-10 bg-green-500/10 rounded-lg md:rounded-xl flex items-center justify-center text-green-600">
-                      <TrendingUp size={16} />
-                    </div>
-                    <div>
-                      <p className="text-[7px] md:text-[10px] text-gray-500 uppercase tracking-widest font-black leading-none">Reach Growth</p>
-                      <p className="text-base md:text-xl font-black text-gray-900">+248.5%</p>
-                    </div>
-                  </div>
-                </motion.div>
+      {/* Moving Trust Strip Section */}
+      <TrustMarquee />
 
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.5, x: -20 }}
-                  whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ 
-                    ...appleTransition, 
-                    delay: 0.7,
-                    y: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }
-                  }}
-                  animate={{ y: [0, 10, 0] }}
-                  className="absolute bottom-6 -left-3 md:bottom-12 md:-left-8 bg-black/90 backdrop-blur-xl p-2.5 md:p-4 rounded-lg md:rounded-2xl shadow-2xl border border-white/10 z-20"
-                >
-                  <div className="flex items-center gap-2 md:gap-3">
-                    <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                      <UserCheck size={14} />
-                    </div>
-                    <p className="text-[8px] md:text-xs font-black text-white pr-1 md:pr-2 uppercase tracking-widest">Verified Strategy</p>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
+      {/* Problem Identification FAQ-style Section */}
+      <ProblemSection />
 
-            <div className="absolute top-0 right-0 -mr-8 md:-mr-16 -mt-8 md:-mt-16 w-24 md:w-64 h-24 md:h-64 bg-blue-50 rounded-full blur-2xl md:blur-3xl opacity-50 -z-10"></div>
-            <div className="absolute bottom-0 left-0 -ml-8 md:-ml-16 -mb-8 md:-mb-16 w-24 md:w-64 h-24 md:h-64 bg-indigo-50 rounded-full blur-2xl md:blur-3xl opacity-50 -z-10"></div>
-          </motion.div>
-          
-          <div className="space-y-4 md:space-y-8 mt-2 md:mt-0">
-            <motion.span 
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={appleTransition}
-              className="text-blue-600 font-black tracking-[0.2em] uppercase text-[9px] md:text-xs block"
-            >
-              The Philosophy
-            </motion.span>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ ...appleTransition, delay: 0.1 }}
-              className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]"
-            >
-              We turn attention into revenue.
-            </motion.h2>
-            <div className="space-y-3 md:space-y-6">
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ ...appleTransition, delay: 0.2 }}
-                className="text-base md:text-xl text-gray-700 leading-relaxed font-medium"
-              >
-                <strong>Growth with Hardik</strong> is a digital growth studio helping creators, founders, and online brands turn attention into revenue. We focus on building clear positioning, conversion-focused content, and systems that scale.
-              </motion.p>
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ ...appleTransition, delay: 0.3 }}
-                className="text-base md:text-xl text-gray-500 leading-relaxed font-medium"
-              >
-                Every project starts with understanding your goals. Then we design digital assets that don’t just look premium, but perform.
-              </motion.p>
-            </div>
-            <div className="grid grid-cols-2 gap-4 md:gap-10 mt-6 md:mt-12">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9, y: 20 }} 
-                whileInView={{ opacity: 1, scale: 1, y: 0 }} 
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, ...appleTransition }}
-                className="group bg-white p-4 md:p-10 rounded-[1.5rem] md:rounded-[3rem] shadow-sm border border-gray-100 relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <Users size={80} />
-                </div>
-                <div className="relative z-10">
-                  <div className="w-8 h-8 md:w-12 md:h-12 bg-blue-50 rounded-lg md:rounded-xl flex items-center justify-center text-blue-600 mb-3 md:mb-4">
-                    <Users size={20} className="md:w-6 md:h-6" />
-                  </div>
-                  <div className="text-2xl md:text-6xl font-black text-black mb-0.5 md:mb-1 leading-none tracking-tighter">
-                    <Counter target={100} suffix="+" />
-                  </div>
-                  <div className="text-gray-400 text-[7px] md:text-[11px] font-black uppercase tracking-[0.2em]">Global Brands</div>
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9, y: 20 }} 
-                whileInView={{ opacity: 1, scale: 1, y: 0 }} 
-                viewport={{ once: true }}
-                transition={{ delay: 0.5, ...appleTransition }}
-                className="group bg-white p-4 md:p-10 rounded-[1.5rem] md:rounded-[3rem] shadow-sm border border-gray-100 relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <BarChart3 size={80} />
-                </div>
-                <div className="relative z-10">
-                  <div className="w-8 h-8 md:w-12 md:h-12 bg-indigo-50 rounded-lg md:rounded-xl flex items-center justify-center text-indigo-600 mb-3 md:mb-4">
-                    <BarChart3 size={20} className="md:w-6 md:h-6" />
-                  </div>
-                  <div className="text-2xl md:text-6xl font-black text-black mb-0.5 md:mb-1 leading-none tracking-tighter">
-                    <Counter target={200} suffix="%" />
-                  </div>
-                  <div className="text-gray-400 text-[7px] md:text-[11px] font-black uppercase tracking-[0.2em]">Avg. Reach Leap</div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="process" className="py-10 md:py-24 px-5 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-6 md:mb-24 text-center md:text-left">
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={appleTransition}
-              className="text-3xl md:text-7xl font-black tracking-tight mb-2 md:mb-8"
-            >
-              Our systematic leap.
-            </motion.h2>
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1, ...appleTransition }}
-              className="flex items-center justify-center md:justify-start gap-2 text-blue-600 font-bold text-[10px] uppercase tracking-widest md:hidden mb-2"
-            >
-              <MoveHorizontal size={12} /> <span>Swipe to explore</span>
-            </motion.div>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1, ...appleTransition }}
-              className="hidden md:block text-lg md:text-2xl text-gray-500 max-w-2xl font-medium"
-            >
-              From first audit to market dominance, we follow a rigorous path to success.
-            </motion.p>
-          </div>
-          <div className="relative">
-            <CarouselFadeOverlay />
-            <div 
-              className="flex md:grid md:grid-cols-4 gap-6 md:gap-16 overflow-x-auto snap-x snap-mandatory md:snap-none no-scrollbar -mx-5 px-5 md:mx-0 md:px-0 pb-4 md:pb-0"
-              onScroll={(e) => handleScrollProgress(e, setActiveProcessIdx)}
-            >
-              {PROCESS_STEPS.map((step, idx) => (
-                <div key={idx} className="relative group flex-shrink-0 w-[85vw] md:w-auto snap-center">
-                  <motion.div 
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ delay: idx * 0.1, ...appleTransition }}
-                    className="text-5xl md:text-9xl font-black text-black/[0.05] mb-2 md:mb-8 transition-colors group-hover:text-blue-50/50 leading-none"
-                  >
-                    {step.number}
-                  </motion.div>
-                  <motion.h3 
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: (idx * 0.1) + 0.2, ...appleTransition }}
-                    className="text-xl md:text-3xl font-black mb-1.5 md:mb-5 tracking-tight"
-                  >
-                    {step.title}
-                  </motion.h3>
-                  <motion.p 
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: (idx * 0.1) + 0.3, ...appleTransition }}
-                    className="text-gray-500 leading-relaxed font-medium text-sm md:text-lg"
-                  >
-                    {step.description}
-                  </motion.p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex justify-center gap-1.5 mt-4 md:hidden">
-            {PROCESS_STEPS.map((_, i) => (
-              <div key={i} className={`h-1 rounded-full transition-all duration-300 ${activeProcessIdx === i ? 'w-5 bg-blue-600' : 'w-1 bg-gray-200'}`} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Interactive Growth System Section */}
+      <GrowthSystem />
 
       <section id="pricing" className="py-10 md:py-24 bg-white px-5 md:px-6">
         <div className="max-w-7xl mx-auto">
@@ -827,7 +664,7 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
                         : 'bg-zinc-950 text-white hover:bg-black shadow-sm'
                     }`}
                   >
-                    Start Growing
+                    {plan.ctaText || 'Start Growing'}
                   </button>
                 </motion.div>
               ))}
@@ -844,99 +681,40 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
         </div>
       </section>
 
-      <section id="feedback" className="py-10 md:py-24 bg-gray-50 px-5 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8 md:mb-20 text-center">
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={appleTransition}
-              className="text-3xl md:text-6xl font-black tracking-tight mb-2"
-            >
-              Client Feedback.
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1, ...appleTransition }}
-              className="text-base md:text-xl text-gray-500 font-medium"
-            >
-              Direct outcomes from creators.
-            </motion.p>
-          </div>
-          <div className="relative">
-            <CarouselFadeOverlay />
-            <div 
-              className="flex md:grid md:grid-cols-2 gap-5 md:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none no-scrollbar -mx-5 px-5 md:mx-0 md:px-0 pb-6 md:pb-0"
-              onScroll={(e) => handleScrollProgress(e, setActiveFeedbackIdx)}
-            >
-              {TESTIMONIALS.map((testimonial, idx) => (
-                <motion.div
-                  key={testimonial.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1, ...appleTransition }}
-                  whileHover={{ y: -5, scale: 1.01, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.08)" }}
-                  className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] border border-gray-100 shadow-sm flex flex-col justify-between flex-shrink-0 w-[90vw] md:w-auto snap-center transition-all duration-300"
-                >
-                  <p className="text-base md:text-2xl font-semibold text-gray-900 leading-relaxed mb-5 md:mb-8 italic">
-                    “{testimonial.content}”
-                  </p>
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                      <UserCheck size={16} className="md:w-[18px] md:h-[18px]" />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-[13px] md:text-base tracking-tight">{testimonial.author}</h4>
-                      <p className="text-[8px] md:text-sm text-gray-400 font-bold uppercase tracking-widest mt-0.5">{testimonial.role}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-          <div className="flex justify-center gap-1.5 mt-2 md:hidden">
-            {TESTIMONIALS.map((_, i) => (
-              <div key={i} className={`h-1 rounded-full transition-all duration-300 ${activeFeedbackIdx === i ? 'w-5 bg-blue-600' : 'w-1 bg-gray-200'}`} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Modern Testimonials Section */}
+      <TestimonialsSection />
 
-      <section id="contact" className="py-16 md:py-32 bg-black text-white px-5 md:px-6 overflow-hidden relative">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-32 relative z-10 items-start">
+      <section id="contact" className="py-12 sm:py-16 md:py-32 bg-black text-white px-4 sm:px-6 md:px-8 overflow-hidden relative">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-32 relative z-10 items-start">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={appleTransition}
-            className="md:sticky md:top-32 mb-10 lg:mb-0"
+            className="md:sticky md:top-32 mb-6 sm:mb-10 lg:mb-0"
           >
-            <h2 className="text-4xl md:text-7xl font-black tracking-tight mb-5 md:mb-10 leading-[1.1] md:leading-[0.95]">Ready to <br className="hidden md:block" /> scale?</h2>
-            <p className="text-base md:text-xl text-gray-400 mb-8 md:mb-16 max-w-md font-medium leading-relaxed">Book your free growth audit. We'll provide a 3-month roadmap for dominance.</p>
-            <div className="grid grid-cols-1 gap-6 md:gap-10">
-              <div className="flex items-center gap-4 md:gap-8 group">
-                <div className="w-12 h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Mail size={22} className="md:w-8 md:h-8" /></div>
+            <h2 className="text-4xl md:text-7xl font-black tracking-tight mb-4 sm:mb-5 md:mb-10 leading-[1.1] md:leading-[0.95]">Ready to <br className="hidden md:block" /> scale?</h2>
+            <p className="text-sm sm:text-base md:text-xl text-gray-400 mb-6 sm:mb-8 md:mb-16 max-w-md font-medium leading-relaxed">Book your free growth audit. We'll provide a 3-month roadmap for dominance.</p>
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:gap-10">
+              <div className="flex items-center gap-3.5 sm:gap-4 md:gap-8 group">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Mail size={20} className="sm:w-[22px] sm:h-[22px] md:w-8 md:h-8" /></div>
                 <div>
-                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Direct Line</p>
-                  <a href={`mailto:${BRAND_EMAIL}`} className="text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight truncate max-w-[240px] md:max-w-none block">{BRAND_EMAIL}</a>
+                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-0.5 sm:mb-1 md:mb-2">Direct Line</p>
+                  <a href={`mailto:${BRAND_EMAIL}`} className="text-sm sm:text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight truncate max-w-[240px] md:max-w-none block">{BRAND_EMAIL}</a>
                 </div>
               </div>
-              <div className="flex items-center gap-4 md:gap-8 group">
-                <div className="w-12 h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Instagram size={22} className="md:w-8 md:h-8" /></div>
+              <div className="flex items-center gap-3.5 sm:gap-4 md:gap-8 group">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Instagram size={20} className="sm:w-[22px] sm:h-[22px] md:w-8 md:h-8" /></div>
                 <div>
-                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Social Feed</p>
-                  <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight">{INSTAGRAM_HANDLE}</a>
+                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-0.5 sm:mb-1 md:mb-2">Social Feed</p>
+                  <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-sm sm:text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight">{INSTAGRAM_HANDLE}</a>
                 </div>
               </div>
-              <div className="flex items-center gap-4 md:gap-8 group">
-                <div className="w-12 h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-green-500 group-hover:border-green-400 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><MessageCircle size={22} className="md:w-8 md:h-8" /></div>
+              <div className="flex items-center gap-3.5 sm:gap-4 md:gap-8 group">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-green-500 group-hover:border-green-400 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><MessageCircle size={20} className="sm:w-[22px] sm:h-[22px] md:w-8 md:h-8" /></div>
                 <div>
-                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-1 md:mb-2">Instant Chat</p>
-                  <a href={`https://wa.me/91${BRAND_PHONE}?text=${encodeURIComponent("Hi, I came across your website and would like to know more about your services.")}`} target="_blank" rel="noreferrer" className="text-base md:text-3xl font-bold hover:text-green-400 transition-colors tracking-tight">WhatsApp Us</a>
+                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-0.5 sm:mb-1 md:mb-2">Instant Chat</p>
+                  <a href={`https://wa.me/91${BRAND_PHONE}?text=${encodeURIComponent("Hi, I came across your website and would like to know more about your services.")}`} target="_blank" rel="noreferrer" className="text-sm sm:text-base md:text-3xl font-bold hover:text-green-400 transition-colors tracking-tight">WhatsApp Us</a>
                 </div>
               </div>
             </div>
@@ -947,129 +725,10 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={appleTransition}
-            className="bg-[#0e0e10] p-7 md:p-16 rounded-[2.5rem] md:rounded-[4rem] border border-white/5 shadow-[0_50px_120px_rgba(0,0,0,0.6)] relative overflow-hidden mt-2 lg:mt-0 flex flex-col justify-center"
+            className="bg-[#0e0e10] p-5 sm:p-8 md:p-12 rounded-[1.75rem] md:rounded-[3.5rem] border border-white/10 shadow-[0_50px_120px_rgba(0,0,0,0.6)] relative overflow-hidden mt-2 lg:mt-0 flex flex-col justify-center w-full"
           >
-            <div className="absolute -top-32 -right-32 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>
-            
-            <AnimatePresence mode="wait">
-              {!isSubmitted ? (
-                <motion.form 
-                  key="contact-form"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onSubmit={handleSubmit}
-                  className="space-y-6 md:space-y-10 relative z-10 w-full"
-                >
-                  <div className="grid md:grid-cols-2 gap-6 md:gap-10">
-                    <div className="space-y-2 md:space-y-4">
-                      <label className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.25em] text-zinc-500 ml-1">Full Name</label>
-                      <input 
-                        type="text" 
-                        name="name"
-                        placeholder="Hardik Jain" 
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl md:rounded-[1.5rem] px-5 md:px-8 py-3.5 md:py-5 focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm md:text-lg font-bold placeholder:text-zinc-700" 
-                        required 
-                      />
-                    </div>
-                    <div className="space-y-2 md:space-y-4">
-                      <label className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.25em] text-zinc-500 ml-1">Phone Number</label>
-                      <div className="relative">
-                        <Smartphone size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 md:w-[18px] md:h-[18px]" />
-                        <input 
-                          type="tel" 
-                          name="phone"
-                          placeholder="74550 67426" 
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl md:rounded-[1.5rem] pl-12 md:pl-16 pr-5 md:pr-8 py-3.5 md:py-5 focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm md:text-lg font-bold placeholder:text-zinc-700" 
-                          required 
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6 md:gap-10">
-                    <div className="space-y-2 md:space-y-4">
-                      <label className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.25em] text-zinc-500 ml-1">Instagram Handle</label>
-                      <div className="relative">
-                        <AtSign size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 md:w-[18px] md:h-[18px]" />
-                        <input 
-                          type="text" 
-                          name="instagram"
-                          placeholder="growthwithhardik" 
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl md:rounded-[1.5rem] pl-12 md:pl-16 pr-5 md:pr-8 py-3.5 md:py-5 focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm md:text-lg font-bold placeholder:text-zinc-700" 
-                          required 
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2 md:space-y-4">
-                      <label className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.25em] text-zinc-500 ml-1">Current Goal</label>
-                      <div className="relative">
-                        <select 
-                          name="goal" 
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl md:rounded-[1.5rem] px-5 md:px-8 py-3.5 md:py-5 focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm md:text-lg font-bold text-white appearance-none cursor-pointer"
-                          required
-                        >
-                          <option value="" disabled selected className="text-zinc-600">Select objective</option>
-                          <option value="organic" className="bg-[#0e0e10] text-white">Organic Reach Growth</option>
-                          <option value="content" className="bg-[#0e0e10] text-white">High-Level Content Production</option>
-                          <option value="brand" className="bg-[#0e0e10] text-white">Full Brand Refinement</option>
-                          <option value="sales" className="bg-[#0e0e10] text-white">Direct Sales & Conversion</option>
-                          <option value="automation" className="bg-[#0e0e10] text-white">AI Scale & Automation</option>
-                        </select>
-                        <ChevronRight size={16} className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-600 rotate-90 pointer-events-none" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 md:pt-8">
-                    <motion.button 
-                      type="submit" 
-                      whileHover={{ scale: 1.02, backgroundColor: '#f1f5f9' }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full bg-white text-black font-black py-4 md:py-7 rounded-xl md:rounded-[2rem] transition-all flex items-center justify-center gap-3 text-base md:text-2xl shadow-2xl shadow-white/5 tracking-tight touch-manipulation"
-                    >
-                      Send Message <ArrowUpRight size={20} className="md:w-7 md:h-7" />
-                    </motion.button>
-                  </div>
-                  
-                  <div className="flex items-center justify-center gap-2 mt-2">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                    <p className="text-zinc-500 text-[9px] md:text-[10px] font-black uppercase tracking-widest">Typical response: <span className="text-white">5 mins</span></p>
-                  </div>
-                </motion.form>
-              ) : (
-                <motion.div 
-                  key="thank-you"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={appleTransition}
-                  className="text-center space-y-8 md:space-y-12 py-8"
-                >
-                  <div className="relative mx-auto w-20 h-20 md:w-32 md:h-32">
-                    <motion.div 
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                      className="w-full h-full bg-blue-600 rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(37,99,235,0.4)]"
-                    >
-                      <Check size={40} className="text-white md:w-16 md:h-16" strokeWidth={3} />
-                    </motion.div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <h3 className="text-2xl md:text-5xl font-black tracking-tight text-white">Success.</h3>
-                    <p className="text-zinc-400 text-base md:text-2xl max-w-xs mx-auto font-medium">We'll be in touch shortly.</p>
-                  </div>
-                  
-                  <button 
-                    onClick={() => setIsSubmitted(false)}
-                    className="text-blue-500 font-black uppercase text-[10px] md:text-sm tracking-widest hover:text-blue-400 transition-colors flex items-center gap-2 mx-auto touch-manipulation"
-                  >
-                    Send another inquiry <ArrowRight size={12} />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="absolute -top-32 -right-32 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <LeadQualificationForm />
           </motion.div>
         </div>
       </section>
@@ -1088,25 +747,63 @@ const Footer = ({
   onShowTerms: () => void 
 }) => {
   return (
-    <footer className="bg-white py-12 md:py-20 border-t border-gray-100 px-5 md:px-6">
+    <footer className="bg-white py-8 md:py-10 border-t border-gray-100 px-5 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-12">
+        {/* Top Row: Logo on left, Large inline Social links on right */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5 pb-6 md:pb-8">
           <Logo onClick={() => { onViewChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
           
-          <div className="flex flex-wrap gap-x-10 gap-y-4">
-            <button onClick={() => { onViewChange('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">Services</button>
-            <button onClick={onShowPrivacy} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">Privacy Policy</button>
-            <button onClick={onShowTerms} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors">Terms of Service</button>
+          {/* Prominent Inline Social Links */}
+          <div className="flex items-center gap-3 sm:gap-5 text-sm sm:text-base font-bold text-gray-800">
+            <a 
+              href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} 
+              target="_blank" 
+              rel="noreferrer" 
+              className="inline-flex items-center gap-2 hover:text-blue-600 transition-all duration-200 hover:-translate-y-0.5 group"
+            >
+              <Instagram className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+              <span>Instagram</span>
+            </a>
+            <span className="text-gray-300 font-normal select-none">•</span>
+            <a 
+              href={`mailto:${BRAND_EMAIL}`} 
+              className="inline-flex items-center gap-2 hover:text-blue-600 transition-all duration-200 hover:-translate-y-0.5 group"
+            >
+              <Mail className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+              <span>Email</span>
+            </a>
+            <span className="text-gray-300 font-normal select-none">•</span>
+            <a 
+              href={`https://wa.me/91${BRAND_PHONE}?text=${encodeURIComponent("Hi, I came across your website and would like to know more about your services.")}`} 
+              target="_blank" 
+              rel="noreferrer" 
+              className="inline-flex items-center gap-2 hover:text-emerald-600 transition-all duration-200 hover:-translate-y-0.5 group"
+            >
+              <MessageCircle className="w-4 h-4 text-gray-500 group-hover:text-emerald-600 transition-colors" />
+              <span>WhatsApp</span>
+            </a>
           </div>
         </div>
         
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-50 gap-4">
-          <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-            &copy; {new Date().getFullYear()} {BRAND_NAME} Agency. Crafted for results.
+        {/* Thin Divider & Bottom Copyright / Legal Links Row */}
+        <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-gray-500 font-medium">
+          <p className="text-gray-500 text-center sm:text-left">
+            © 2026 GrowthWithHardik. Built with strategy, driven by results.
           </p>
-          <div className="flex gap-6">
-            <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-gray-300 hover:text-blue-600 transition-colors"><Instagram size={16} /></a>
-            <a href={`mailto:${BRAND_EMAIL}`} className="text-gray-300 hover:text-blue-600 transition-colors"><Mail size={16} /></a>
+          
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={onShowPrivacy} 
+              className="hover:text-black transition-colors cursor-pointer"
+            >
+              Privacy Policy
+            </button>
+            <button 
+              onClick={onShowTerms} 
+              className="hover:text-black transition-colors cursor-pointer"
+            >
+              Terms of Service
+            </button>
           </div>
         </div>
       </div>
@@ -1181,6 +878,9 @@ export default function App() {
           </>
         }
       />
+
+      {/* Intelligent Lead Capture System with Exit Intent & Scroll/Time Triggers */}
+      <SmartLeadCaptureModal />
     </div>
   );
 }

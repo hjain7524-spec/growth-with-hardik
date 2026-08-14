@@ -13,6 +13,7 @@ export interface PricingPlan {
   features: string[];
   price?: string;
   highlighted?: boolean;
+  ctaText?: string;
 }
 
 export interface ProcessStep {
@@ -26,4 +27,8 @@ export interface Testimonial {
   content: string;
   author: string;
   role: string;
+  metricTag?: string;
+  rating?: number;
+  category?: 'creator' | 'brand' | 'agency';
+  verified?: boolean;
 }

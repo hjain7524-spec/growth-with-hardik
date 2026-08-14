@@ -28,6 +28,24 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        @keyframes trustMarquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        .animate-trust-marquee {
+            display: flex;
+            width: max-content;
+            animation: trustMarquee 30s linear infinite;
+            will-change: transform;
+        }
+
+        @media (max-width: 640px) {
+            .animate-trust-marquee {
+                animation-duration: 34s;
+            }
+        }
     </style>
 <script type="importmap">
 {
@@ -40,9 +58,10 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body class="antialiased overflow-x-hidden">
-   <script type="module" src="/index.tsx"></script> 
     <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>

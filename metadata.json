@@ -1,5 +1,8 @@
 {
   "name": "Copy of Growth with Hardik - Premium Instagram Growth Agency",
   "description": "An Apple-inspired high-conversion landing page for Instagram growth, digital strategy, and AI-powered marketing services.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
