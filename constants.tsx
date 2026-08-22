@@ -73,7 +73,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Profile Optimization',
       'Captions & Hashtags',
       'Monthly Growth Review',
-      'Direct WhatsApp Support'
+      'Direct Support'
     ]
   },
   {

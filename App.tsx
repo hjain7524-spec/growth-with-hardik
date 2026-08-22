@@ -5,7 +5,6 @@ import { TrustMarquee } from './TrustMarquee';
 import { ProblemSection } from './ProblemSection';
 import { GrowthSystem } from './GrowthSystem';
 import { TestimonialsSection } from './TestimonialsSection';
-import { LeadQualificationForm } from './LeadQualificationForm';
 import { SmartLeadCaptureModal } from './SmartLeadCaptureModal';
 import { 
   ArrowRight, 
@@ -38,7 +37,6 @@ import {
 import { 
   BRAND_NAME, 
   BRAND_EMAIL, 
-  BRAND_PHONE, 
   INSTAGRAM_HANDLE, 
   SERVICES, 
   PRICING_PLANS, 
@@ -57,77 +55,56 @@ type ViewType = 'home' | 'services';
 const appleTransition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 const appleSpring = { type: "spring", stiffness: 100, damping: 20, mass: 1 };
 
-const GrowthLogoSVG = () => (
-  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-1.5">
-    {/* Bar Chart Section */}
-    <rect x="38" y="52" width="6.5" height="15" rx="1" fill="#0EA5E9"/>
-    <rect x="47.5" y="42" width="6.5" height="25" rx="1" fill="white"/>
-    <rect x="57" y="32" width="6.5" height="35" rx="1" fill="#0EA5E9"/>
-    
-    {/* Sweeping Growth Arrow Swoosh */}
+// Abstract "G" Growth Symbol: Flat vector, modern geometric with subtle electric-blue accent
+const AbstractGSymbol = ({ className = "w-full h-full" }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 36 36" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={className}
+    aria-hidden="true"
+  >
+    {/* Abstract Geometric "G" Growth Glyph */}
     <path 
-      d="M30 63.5C35 73 46 76 69.5 62" 
-      stroke="white" 
-      strokeWidth="4" 
+      d="M26 10H14C9.58172 10 6 13.5817 6 18V18C6 22.4183 9.58172 26 14 26H22C26.4183 26 30 22.4183 30 18V15H18" 
+      stroke="#FFFFFF" 
+      strokeWidth="3.2" 
       strokeLinecap="round" 
-    />
-    <path 
-      d="M69.5 62L64.5 57.5L71.5 63.5L69.5 62Z" 
-      fill="white" 
-      stroke="white" 
-      strokeWidth="1.5" 
       strokeLinejoin="round" 
     />
-
-    {/* Rocket - Refined to match the provided inspiration */}
-    <g transform="translate(32, 25) rotate(-35)">
-      {/* Exhaust plume */}
-      <path 
-        d="M4 14L0 22L8 22L4 14Z" 
-        fill="white" 
-        fillOpacity="0.7"
-      />
-      {/* Body */}
-      <path 
-        d="M4 0C4 0 8 1.5 8 6L7 14H1L0 6C0 1.5 4 0 4 0Z" 
-        fill="#0EA5E9" 
-      />
-      {/* Tail Fins */}
-      <path d="M1 12L-2 15V17H1L2 14" fill="#0EA5E9" />
-      <path d="M7 12L10 15V17H7L6 14" fill="#0EA5E9" />
-      {/* Small details */}
-      <circle cx="4" cy="5" r="0.8" fill="white" fillOpacity="0.5" />
-    </g>
+    {/* Subtle Electric-Blue Precision Growth Accent */}
+    <circle cx="26" cy="10" r="2.2" fill="#2563EB" />
   </svg>
 );
 
 const BrandLogoImage = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
   const sizeClasses = {
-    sm: "w-8 h-8 md:w-10 md:h-10",
-    md: "w-10 h-10 md:w-14 md:h-14",
-    lg: "w-32 h-32 md:w-64 md:h-64"
+    sm: "w-7 h-7 sm:w-8 sm:h-8",
+    md: "w-8 h-8 sm:w-9 sm:h-9",
+    lg: "w-14 h-14 sm:w-16 sm:h-16"
   };
 
   return (
-    <div className={`${sizeClasses[size]} relative rounded-full bg-black overflow-hidden shrink-0 shadow-sm flex items-center justify-center`}>
-      <GrowthLogoSVG />
+    <div className={`${sizeClasses[size]} rounded-lg sm:rounded-xl bg-black overflow-hidden shrink-0 shadow-sm flex items-center justify-center p-1.5`}>
+      <AbstractGSymbol />
     </div>
   );
 };
 
 const Logo = ({ onClick }: { onClick?: () => void }) => (
   <div 
-    className="flex items-center gap-2.5 md:gap-3 group cursor-pointer" 
+    className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer select-none" 
     onClick={onClick}
+    id="main-brand-logo"
   >
-    <div className="transition-transform duration-500 group-hover:scale-105 active:scale-95">
+    <div className="transition-transform duration-300 group-hover:scale-105 active:scale-95">
       <BrandLogoImage size="md" />
     </div>
-    <div className="flex flex-col justify-center">
-      <span className="font-bold text-base md:text-lg tracking-tight leading-none text-black">
-        {BRAND_NAME}
-      </span>
-      <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-gray-400 font-black mt-1 md:mt-1.5">Agency</span>
+    <div className="flex items-center text-[16px] sm:text-[18px] tracking-tight leading-none text-black">
+      <span className="font-extrabold tracking-tight">Growth</span>
+      <span className="text-zinc-500 font-medium px-[1px]">with</span>
+      <span className="font-extrabold tracking-tight">Hardik</span>
+      <span className="w-1.5 h-1.5 rounded-full bg-blue-600 ml-0.5 inline-block self-center"></span>
     </div>
   </div>
 );
@@ -153,7 +130,15 @@ const Counter = ({ target, suffix = "", duration = 2 }: { target: number, suffix
   return <span ref={ref}>{displayValue}{suffix}</span>;
 };
 
-const Navbar = ({ activeView, onViewChange }: { activeView: ViewType, onViewChange: (view: ViewType) => void }) => {
+const Navbar = ({ 
+  activeView, 
+  onViewChange, 
+  onRequestAudit 
+}: { 
+  activeView: ViewType, 
+  onViewChange: (view: ViewType) => void, 
+  onRequestAudit: () => void 
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -184,8 +169,7 @@ const Navbar = ({ activeView, onViewChange }: { activeView: ViewType, onViewChan
 
   const handleAuditClick = () => {
     setIsMobileMenuOpen(false);
-    const message = encodeURIComponent("Hi, I’m interested in a free growth audit for my brand.");
-    window.open(`https://wa.me/91${BRAND_PHONE}?text=${message}`, '_blank');
+    onRequestAudit();
   };
 
   return (
@@ -198,16 +182,17 @@ const Navbar = ({ activeView, onViewChange }: { activeView: ViewType, onViewChan
             <button 
               key={link.name} 
               onClick={() => handleNavClick(link)}
-              className={`text-sm font-bold transition-colors ${activeView === link.view && !link.href ? 'text-blue-600' : 'text-gray-500 hover:text-black'}`}
+              className={`text-sm font-bold transition-colors cursor-pointer ${activeView === link.view && !link.href ? 'text-blue-600' : 'text-gray-500 hover:text-black'}`}
             >
               {link.name}
             </button>
           ))}
           <button 
             onClick={handleAuditClick}
-            className="bg-black text-white px-6 py-3 rounded-full text-sm font-black hover:bg-gray-800 transition-all active:scale-95 shadow-xl shadow-black/10"
+            className="bg-black text-white px-6 py-3 rounded-full text-sm font-black hover:bg-gray-800 transition-all active:scale-95 shadow-xl shadow-black/10 cursor-pointer touch-manipulation flex items-center gap-2"
           >
-            Free Growth Audit
+            <span>Request a Growth Audit</span>
+            <ArrowRight size={15} />
           </button>
         </div>
 
@@ -239,15 +224,15 @@ const Navbar = ({ activeView, onViewChange }: { activeView: ViewType, onViewChan
                 </button>
               ))}
               <button 
-                className="bg-black text-white px-6 py-5 rounded-2xl text-center font-black text-xl active:scale-[0.98] transition-transform mt-2"
+                className="bg-black text-white px-6 py-4 rounded-2xl text-center font-black text-lg active:scale-[0.98] transition-transform mt-2 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
                 onClick={handleAuditClick}
               >
-                Free Growth Audit
+                <span>Request a Growth Audit</span>
+                <ArrowRight size={18} />
               </button>
               <div className="flex justify-center gap-8 pt-4 border-t border-gray-100">
-                <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-gray-400 p-2"><Instagram size={24} /></a>
-                <a href={`mailto:${BRAND_EMAIL}`} className="text-gray-400 p-2"><Mail size={24} /></a>
-                <a href={`https://wa.me/91${BRAND_PHONE}`} target="_blank" rel="noreferrer" className="text-gray-400 p-2"><MessageCircle size={24} /></a>
+                <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-gray-400 p-2 hover:text-black transition-colors"><Instagram size={24} /></a>
+                <a href={`mailto:${BRAND_EMAIL}`} className="text-gray-400 p-2 hover:text-black transition-colors"><Mail size={24} /></a>
               </div>
             </div>
           </motion.div>
@@ -303,12 +288,12 @@ const LegalModal = ({ isOpen, onClose, title, content }: { isOpen: boolean, onCl
   );
 };
 
-const ServicesPage = ({ onBack }: { onBack: () => void }) => {
-  const handleServiceInquiry = () => {
-    const message = encodeURIComponent("Hi, I’d like to know more about your services.");
-    window.open(`https://wa.me/91${BRAND_PHONE}?text=${message}`, '_blank');
-  };
+interface ServicesPageProps {
+  onBack: () => void;
+  onRequestAudit: () => void;
+}
 
+const ServicesPage = ({ onBack, onRequestAudit }: ServicesPageProps) => {
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
@@ -321,17 +306,17 @@ const ServicesPage = ({ onBack }: { onBack: () => void }) => {
           onClick={onBack}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="group flex items-center gap-2 text-gray-400 hover:text-black transition-colors font-bold mb-6 md:mb-12 touch-manipulation"
+          className="group flex items-center gap-2 text-gray-400 hover:text-black transition-colors font-bold mb-6 sm:mb-8 md:mb-12 touch-manipulation cursor-pointer"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Overview
+          <span>Back to Overview</span>
         </motion.button>
 
-        <div className="mb-10 md:mb-20">
+        <div className="mb-8 sm:mb-12 md:mb-16">
           <motion.span 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-blue-600 font-black tracking-[0.2em] uppercase text-[10px] md:text-xs mb-3 md:mb-6 block"
+            className="text-blue-600 font-bold tracking-[0.14em] uppercase text-[12px] sm:text-xs mb-2 sm:mb-2.5 block"
           >
             Capabilities
           </motion.span>
@@ -339,21 +324,21 @@ const ServicesPage = ({ onBack }: { onBack: () => void }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, ...appleTransition }}
-            className="text-3xl md:text-8xl font-black tracking-tight mb-4 md:mb-8 leading-[1.1] md:leading-[1.05]"
+            className="text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2.5 sm:mb-4 leading-[1.08]"
           >
             Premium Solutions <br className="hidden md:block" /> for Modern Brands.
           </motion.h1>
-          <motion.h3 
+          <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, ...appleTransition }}
-            className="text-base md:text-2xl text-gray-400 max-w-2xl font-medium leading-relaxed"
+            className="text-[16px] sm:text-lg md:text-xl text-gray-500 max-w-[340px] sm:max-w-2xl font-normal sm:font-medium leading-[1.48] sm:leading-[1.55]"
           >
             Explore our ecosystem of high-performance growth services designed to scale your Instagram impact.
-          </motion.h3>
+          </motion.p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {SERVICES.map((service, idx) => {
             const Icon = IconMap[service.iconName];
             return (
@@ -363,10 +348,10 @@ const ServicesPage = ({ onBack }: { onBack: () => void }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ ...appleTransition, delay: idx * 0.1 }}
-                whileHover={{ y: -12, scale: 1.02 }}
-                className="group relative bg-gray-50 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-transparent hover:border-blue-500/20 hover:bg-white hover:shadow-[0_40px_80px_-15px_rgba(59,130,246,0.15)] transition-all duration-500 overflow-hidden cursor-default flex flex-col"
+                whileHover={{ y: -8, scale: 1.01 }}
+                className="group relative bg-gray-50 p-5 sm:p-7 md:p-8 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] border border-transparent hover:border-blue-500/20 hover:bg-white hover:shadow-[0_30px_60px_-15px_rgba(59,130,246,0.12)] transition-all duration-300 overflow-hidden cursor-default flex flex-col"
               >
-                <div className="transition-transform duration-700 group-hover:scale-[1.02] flex flex-col h-full">
+                <div className="transition-transform duration-500 group-hover:scale-[1.01] flex flex-col h-full">
                   <motion.div 
                     initial={{ scale: 0.5, opacity: 0, y: 15 }}
                     whileInView={{ scale: 1, opacity: 1, y: 0 }}
@@ -377,31 +362,32 @@ const ServicesPage = ({ onBack }: { onBack: () => void }) => {
                       damping: 15, 
                       delay: (idx * 0.1) + 0.3 
                     }}
-                    className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-6 md:mb-10 text-black group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm"
-                    whileHover={{ rotate: 360, scale: 1.15 }}
+                    className="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 text-black group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm"
+                    whileHover={{ rotate: 360, scale: 1.1 }}
                   >
-                    <Icon size={24} className="md:w-8 md:h-8" />
+                    <Icon size={22} className="md:w-6 md:h-6" />
                   </motion.div>
                   
-                  <h3 className="text-xl md:text-3xl font-black mb-2 md:mb-4 tracking-tight group-hover:text-blue-600 transition-colors duration-300">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-black mb-1.5 sm:mb-2 tracking-tight group-hover:text-blue-600 transition-colors duration-200">
                     {service.title}
                   </h3>
-                  <p className="text-gray-500 leading-relaxed font-medium text-sm md:text-lg mb-6 md:mb-10 flex-grow">
+                  <p className="text-gray-500 leading-[1.55] font-medium text-xs sm:text-sm md:text-[15px] mb-5 sm:mb-6 flex-grow">
                     {service.description}
                   </p>
                   
                   <div className="mt-auto">
                     <button 
-                      onClick={handleServiceInquiry}
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-black text-white font-black uppercase text-[10px] md:text-xs tracking-widest px-8 py-4 rounded-xl hover:bg-blue-600 transition-all active:scale-95 shadow-lg shadow-black/5 touch-manipulation"
+                      onClick={onRequestAudit}
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-black text-white font-black uppercase text-[10px] md:text-xs tracking-widest px-6 py-3.5 rounded-xl hover:bg-blue-600 transition-all active:scale-95 shadow-md shadow-black/5 touch-manipulation cursor-pointer min-h-[44px]"
                     >
-                      Get Info <ArrowUpRight size={14} />
+                      <span>Request a Growth Audit</span>
+                      <ArrowUpRight size={14} />
                     </button>
                   </div>
                 </div>
 
-                <div className="absolute top-0 right-0 p-6 md:p-8 opacity-0 group-hover:opacity-5 transition-all duration-700 group-hover:scale-110 pointer-events-none hidden md:block">
-                   <Icon size={120} />
+                <div className="absolute top-0 right-0 p-6 md:p-8 opacity-0 group-hover:opacity-5 transition-all duration-500 pointer-events-none hidden md:block">
+                   <Icon size={110} />
                 </div>
               </motion.div>
             );
@@ -416,11 +402,14 @@ const CarouselFadeOverlay = () => (
   <div className="md:hidden absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
 );
 
-const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [activeProcessIdx, setActiveProcessIdx] = useState(0);
+const HomeView = ({ 
+  onViewServices,
+  onRequestAudit 
+}: { 
+  onViewServices: () => void,
+  onRequestAudit: () => void
+}) => {
   const [activePricingIdx, setActivePricingIdx] = useState(0);
-  const [activeFeedbackIdx, setActiveFeedbackIdx] = useState(0);
   
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -435,45 +424,6 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
   const backgroundScale2 = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.2]);
-  
-  const handleAuditClick = () => {
-    const message = encodeURIComponent("Hi, I’m interested in a free growth audit for my brand.");
-    window.open(`https://wa.me/91${BRAND_PHONE}?text=${message}`, '_blank');
-  };
-
-  const scrollToContact = () => {
-    const el = document.querySelector('#contact');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => {
-        const input = document.querySelector('input[name="name"]') as HTMLInputElement;
-        input?.focus({ preventScroll: true });
-      }, 800);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(form);
-    
-    try {
-      const response = await fetch("https://formspree.io/f/xnjqwnkb", {
-        method: "POST",
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        setIsSubmitted(true);
-        form.reset();
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-    }
-  };
 
   const handleScrollProgress = (e: React.UIEvent<HTMLDivElement>, setter: (idx: number) => void) => {
     const container = e.currentTarget;
@@ -486,7 +436,7 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
 
   return (
     <>
-      <section ref={heroRef} className="relative pt-20 sm:pt-24 lg:pt-28 pb-8 lg:pb-12 overflow-hidden px-5 sm:px-6 md:px-8">
+      <section ref={heroRef} className="relative pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-12 md:pb-14 overflow-hidden px-4 sm:px-6 md:px-8 w-full max-w-full box-border">
         {/* Soft glowing background elements with subtle multi-layer parallax */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none overflow-hidden">
           <motion.div 
@@ -505,76 +455,51 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
 
         <motion.div 
           style={{ y: contentY, opacity: contentOpacity }}
-          className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10 will-change-transform"
+          className="w-full max-w-4xl mx-auto flex flex-col items-center text-center relative z-10 will-change-transform"
         >
-          {/* Social Proof Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-3 bg-gray-900/5 border border-gray-900/10 backdrop-blur-xl px-4 py-1.5 rounded-full mb-4 sm:mb-5"
-          >
-            <div className="flex -space-x-2 overflow-hidden">
-              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Client 1" />
-              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Client 2" />
-              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Client 3" />
-              <img className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Client 4" />
-            </div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-900">
-              <span className="flex text-amber-400">★★★★★</span>
-              <span>Trusted by 30+ Brands & Creators</span>
-            </div>
-          </motion.div>
-
-          {/* Headline */}
+          {/* Main Headline - Exactly 3 clean lines on mobile, 2 lines on desktop */}
           <motion.h1
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[1.05] text-gray-950 mb-4 sm:mb-5"
+            transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full text-[27px] min-[375px]:text-[30px] min-[414px]:text-[34px] sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight sm:tracking-[-0.025em] leading-[1.08] sm:leading-[1.05] text-gray-950 text-center"
           >
-            Grow on Instagram. <br className="hidden sm:inline" />
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">Build a Brand People Remember.</span>
+            <span className="block">Grow Your Instagram.</span>
+            <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-1 sm:mt-1.5">
+              <span className="block sm:inline">Build a Personal</span>{' '}
+              <span className="block sm:inline">Brand.</span>
+            </span>
           </motion.h1>
 
-          {/* Subheadline */}
+          {/* Subheadline - Compact supporting copy */}
           <motion.p
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="text-lg sm:text-xl lg:text-2xl text-gray-500 font-medium leading-relaxed mb-6 sm:mb-8 max-w-2xl"
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[14px] sm:text-base md:text-lg text-gray-500 font-normal leading-[1.4] sm:leading-[1.5] mt-4 sm:mt-6 mb-6 sm:mb-7 max-w-[330px] sm:max-w-xl mx-auto text-center"
           >
-            We help creators and modern brands improve their reach by <span className="text-gray-950 font-extrabold border-b-2 border-blue-600 pb-0.5">200%</span> using well tested strategies.
+            Turn your content into consistent growth, stronger positioning, and qualified leads.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* Primary CTA & Proof Statement */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto items-stretch sm:items-center justify-center"
+            transition={{ duration: 0.6, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center w-full"
           >
             <button
-              onClick={handleAuditClick}
-              className="group relative bg-gray-950 text-white px-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-black transition-all duration-300 hover:bg-black hover:shadow-2xl hover:shadow-blue-500/15 flex items-center justify-center gap-3 active:scale-95 touch-manipulation"
+              onClick={onRequestAudit}
+              className="group relative bg-gray-950 text-white px-7 sm:px-9 h-[54px] sm:h-[58px] rounded-full text-[15px] sm:text-base md:text-[17px] font-black transition-all duration-300 hover:bg-black hover:shadow-xl hover:shadow-blue-500/15 flex items-center justify-center gap-2.5 sm:gap-3 active:scale-95 touch-manipulation cursor-pointer w-full max-w-[360px] sm:w-auto"
             >
-              Book a Free Growth Audit
-              <ArrowRight className="group-hover:translate-x-1.5 transition-transform" size={20} />
+              <span>Request a Growth Audit</span>
+              <ArrowRight className="group-hover:translate-x-1.5 transition-transform w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            <button
-              onClick={() => {
-                const el = document.querySelector('#process') || document.querySelector('#pricing');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  onViewServices();
-                }
-              }}
-              className="px-8 py-4 sm:py-5 rounded-full text-base sm:text-lg font-bold text-gray-600 hover:text-gray-950 hover:bg-gray-100/80 border border-gray-200/80 transition-all flex items-center justify-center gap-2 active:scale-95 touch-manipulation"
-            >
-              See Our Work <ChevronRight size={20} />
-            </button>
+            {/* Subtle Proof Statement Underneath CTA */}
+            <p className="mt-3 sm:mt-3.5 text-xs sm:text-[13px] font-medium text-gray-400 sm:text-gray-500 tracking-normal text-center select-none">
+              65,000+ creators analyzed
+            </p>
           </motion.div>
         </motion.div>
       </section>
@@ -586,17 +511,17 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
       <ProblemSection />
 
       {/* Interactive Growth System Section */}
-      <GrowthSystem />
+      <GrowthSystem onRequestAudit={onRequestAudit} />
 
-      <section id="pricing" className="py-10 md:py-24 bg-white px-5 md:px-6">
+      <section id="pricing" className="py-12 sm:py-16 md:py-24 bg-white px-4 sm:px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 md:mb-20">
+          <div className="text-center mb-6 sm:mb-10 md:mb-12">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={appleTransition}
-              className="text-3xl md:text-6xl font-black tracking-tight mb-2 md:mb-6"
+              className="text-[30px] sm:text-4xl md:text-5xl lg:text-[50px] font-black tracking-tight mb-1.5 sm:mb-2.5 leading-[1.1]"
             >
               Transparent pricing.
             </motion.h2>
@@ -605,7 +530,7 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1, ...appleTransition }}
-              className="text-base md:text-xl text-gray-500 max-w-xl mx-auto font-medium"
+              className="text-[14px] sm:text-base md:text-lg text-gray-500 max-w-none sm:max-w-lg mx-auto font-normal leading-[1.4] sm:leading-[1.5] tracking-tight"
             >
               Choose the plan that fits your growth stage.
             </motion.p>
@@ -613,55 +538,55 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
           <div className="relative">
             <CarouselFadeOverlay />
             <div 
-              className="flex md:grid md:grid-cols-3 gap-5 md:gap-8 items-stretch overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none no-scrollbar -mx-5 px-5 md:mx-0 md:px-0 pb-6 md:pb-0"
+              className="flex md:grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-7 items-stretch overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none no-scrollbar -mx-5 px-5 md:mx-0 md:px-0 pb-4 md:pb-0"
               onScroll={(e) => handleScrollProgress(e, setActivePricingIdx)}
             >
               {PRICING_PLANS.map((plan, idx) => (
                 <motion.div
                   key={plan.id}
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1, ...appleTransition }}
-                  whileHover={{ y: -8, scale: plan.highlighted ? 1.04 : 1.02 }}
-                  className={`relative flex flex-col p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border transition-all duration-500 flex-shrink-0 w-[88vw] md:w-auto snap-center ${
+                  whileHover={{ y: -6, scale: plan.highlighted ? 1.03 : 1.01 }}
+                  className={`relative flex flex-col p-5 sm:p-7 md:p-8 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] border transition-all duration-300 flex-shrink-0 w-[84vw] max-w-[340px] sm:w-[360px] md:w-auto snap-center ${
                     plan.highlighted 
-                      ? 'bg-zinc-950 border-white/10 shadow-[0_40px_80px_-15px_rgba(59,130,246,0.25)] text-white z-10 md:scale-[1.02] ring-1 ring-white/5' 
-                      : 'bg-white border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] text-gray-900'
+                      ? 'bg-zinc-950 border-white/10 shadow-[0_30px_60px_-15px_rgba(59,130,246,0.25)] text-white z-10 md:scale-[1.02] ring-1 ring-white/5' 
+                      : 'bg-white border-gray-100 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] text-gray-900'
                   }`}
                 >
                   {plan.highlighted && (
-                    <div className="hidden md:block absolute -top-3.5 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[9px] md:text-[10px] font-black px-4 md:px-5 py-1.5 md:py-2 rounded-full uppercase tracking-[0.2em] shadow-xl shadow-blue-500/30 whitespace-nowrap">
+                    <div className="hidden md:block absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-lg shadow-blue-500/30 whitespace-nowrap">
                       Recommended Choice
                     </div>
                   )}
-                  <div className="mb-5 md:mb-10">
+                  <div className="mb-4 sm:mb-6">
                     {plan.highlighted && (
-                      <div className="inline-block md:hidden bg-blue-600 text-white text-[7px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 leading-none">
+                      <div className="inline-block md:hidden bg-blue-600 text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest mb-2.5 leading-none">
                         Recommended
                       </div>
                     )}
-                    <h3 className={`text-lg md:text-2xl font-black mb-1 md:mb-2 tracking-tight ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
-                    <p className={`text-xs md:text-sm font-medium leading-relaxed ${plan.highlighted ? 'text-gray-400' : 'text-gray-500'}`}>{plan.description}</p>
+                    <h3 className={`text-lg sm:text-xl md:text-2xl font-black mb-1 tracking-tight ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
+                    <p className={`text-xs sm:text-[13px] font-medium leading-relaxed ${plan.highlighted ? 'text-gray-400' : 'text-gray-500'}`}>{plan.description}</p>
                   </div>
                   
-                  <ul className="space-y-4 md:space-y-6 mb-8 md:mb-12 flex-grow">
+                  <ul className="space-y-2.5 sm:space-y-3.5 mb-6 sm:mb-8 flex-grow">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3 md:gap-4">
-                        <div className={`mt-0.5 flex-shrink-0 w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center ${plan.highlighted ? 'bg-blue-600/20 text-blue-400' : 'bg-gray-100 text-gray-500'}`}>
-                          <Check size={10} className="md:w-3.5 md:h-3.5" strokeWidth={3} />
+                      <li key={i} className="flex items-start gap-2.5 sm:gap-3">
+                        <div className={`mt-0.5 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center ${plan.highlighted ? 'bg-blue-600/20 text-blue-400' : 'bg-gray-100 text-gray-500'}`}>
+                          <Check size={10} className="sm:w-3 sm:h-3" strokeWidth={3} />
                         </div>
-                        <span className={`text-[13px] md:text-base font-semibold leading-relaxed ${plan.highlighted ? 'text-gray-200' : 'text-gray-600'}`}>{feature}</span>
+                        <span className={`text-[13px] sm:text-sm md:text-[15px] font-semibold leading-snug ${plan.highlighted ? 'text-gray-200' : 'text-gray-600'}`}>{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   <button 
-                    onClick={scrollToContact}
-                    className={`block w-full text-center py-4 md:py-5 rounded-2xl font-black transition-all text-[10px] md:text-sm tracking-widest uppercase active:scale-[0.98] touch-manipulation ${
+                    onClick={onRequestAudit}
+                    className={`block w-full text-center py-3 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black transition-all text-xs sm:text-sm tracking-wider uppercase active:scale-[0.98] min-h-[46px] sm:min-h-[50px] touch-manipulation cursor-pointer ${
                       plan.highlighted 
-                        ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-600/20' 
-                        : 'bg-zinc-950 text-white hover:bg-black shadow-sm'
+                        ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-600/20' 
+                        : 'bg-zinc-950 text-white hover:bg-black shadow-xs'
                     }`}
                   >
                     {plan.ctaText || 'Start Growing'}
@@ -672,73 +597,24 @@ const HomeView = ({ onViewServices }: { onViewServices: () => void }) => {
           </div>
           <div className="flex justify-center gap-1.5 mt-4 md:hidden">
             {PRICING_PLANS.map((_, i) => (
-              <div key={i} className={`h-1 rounded-full transition-all duration-300 ${activePricingIdx === i ? 'w-5 bg-blue-600' : 'w-1 bg-gray-200'}`} />
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${activePricingIdx === i ? 'w-5 bg-blue-600' : 'w-1.5 bg-gray-200'}`} />
             ))}
           </div>
-          <div className="mt-6 md:mt-20 text-center">
-            <p className="text-[10px] md:text-sm text-gray-400 font-medium max-w-[240px] md:max-w-sm mx-auto">All plans include regular performance updates and strategy refinements.</p>
+          <div className="mt-5 sm:mt-8 md:mt-10 text-center">
+            <p className="text-xs sm:text-sm text-gray-400 font-medium max-w-sm mx-auto">All plans include regular performance updates and strategy refinements.</p>
           </div>
         </div>
       </section>
 
       {/* Modern Testimonials Section */}
       <TestimonialsSection />
-
-      <section id="contact" className="py-12 sm:py-16 md:py-32 bg-black text-white px-4 sm:px-6 md:px-8 overflow-hidden relative">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-32 relative z-10 items-start">
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={appleTransition}
-            className="md:sticky md:top-32 mb-6 sm:mb-10 lg:mb-0"
-          >
-            <h2 className="text-4xl md:text-7xl font-black tracking-tight mb-4 sm:mb-5 md:mb-10 leading-[1.1] md:leading-[0.95]">Ready to <br className="hidden md:block" /> scale?</h2>
-            <p className="text-sm sm:text-base md:text-xl text-gray-400 mb-6 sm:mb-8 md:mb-16 max-w-md font-medium leading-relaxed">Book your free growth audit. We'll provide a 3-month roadmap for dominance.</p>
-            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:gap-10">
-              <div className="flex items-center gap-3.5 sm:gap-4 md:gap-8 group">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Mail size={20} className="sm:w-[22px] sm:h-[22px] md:w-8 md:h-8" /></div>
-                <div>
-                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-0.5 sm:mb-1 md:mb-2">Direct Line</p>
-                  <a href={`mailto:${BRAND_EMAIL}`} className="text-sm sm:text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight truncate max-w-[240px] md:max-w-none block">{BRAND_EMAIL}</a>
-                </div>
-              </div>
-              <div className="flex items-center gap-3.5 sm:gap-4 md:gap-8 group">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><Instagram size={20} className="sm:w-[22px] sm:h-[22px] md:w-8 md:h-8" /></div>
-                <div>
-                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-0.5 sm:mb-1 md:mb-2">Social Feed</p>
-                  <a href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="text-sm sm:text-base md:text-3xl font-bold hover:text-blue-400 transition-colors tracking-tight">{INSTAGRAM_HANDLE}</a>
-                </div>
-              </div>
-              <div className="flex items-center gap-3.5 sm:gap-4 md:gap-8 group">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl md:rounded-3xl flex items-center justify-center group-hover:bg-green-500 group-hover:border-green-400 transition-all duration-500 shadow-2xl backdrop-blur-md shrink-0"><MessageCircle size={20} className="sm:w-[22px] sm:h-[22px] md:w-8 md:h-8" /></div>
-                <div>
-                  <p className="text-[8px] md:text-[11px] text-zinc-500 uppercase tracking-[0.25em] font-black mb-0.5 sm:mb-1 md:mb-2">Instant Chat</p>
-                  <a href={`https://wa.me/91${BRAND_PHONE}?text=${encodeURIComponent("Hi, I came across your website and would like to know more about your services.")}`} target="_blank" rel="noreferrer" className="text-sm sm:text-base md:text-3xl font-bold hover:text-green-400 transition-colors tracking-tight">WhatsApp Us</a>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={appleTransition}
-            className="bg-[#0e0e10] p-5 sm:p-8 md:p-12 rounded-[1.75rem] md:rounded-[3.5rem] border border-white/10 shadow-[0_50px_120px_rgba(0,0,0,0.6)] relative overflow-hidden mt-2 lg:mt-0 flex flex-col justify-center w-full"
-          >
-            <div className="absolute -top-32 -right-32 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
-            <LeadQualificationForm />
-          </motion.div>
-        </div>
-      </section>
     </>
   );
 };
 
-// Footer component provides essential branding and navigation links at the bottom of the page
+// Premium Editorial Black Footer Section
 const Footer = ({ 
-  onViewChange, 
+  onViewChange: _onViewChange, 
   onShowPrivacy, 
   onShowTerms 
 }: { 
@@ -747,64 +623,57 @@ const Footer = ({
   onShowTerms: () => void 
 }) => {
   return (
-    <footer className="bg-white py-8 md:py-10 border-t border-gray-100 px-5 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Top Row: Logo on left, Large inline Social links on right */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-5 pb-6 md:pb-8">
-          <Logo onClick={() => { onViewChange('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
-          
-          {/* Prominent Inline Social Links */}
-          <div className="flex items-center gap-3 sm:gap-5 text-sm sm:text-base font-bold text-gray-800">
+    <footer className="bg-black text-white pt-12 sm:pt-16 pb-14 sm:pb-16 px-5 sm:px-8 md:px-12 border-t border-white/10">
+      <div className="max-w-4xl mx-auto flex flex-col text-left items-start">
+        {/* Editorial Statement Quote */}
+        <h2 className="text-[24px] min-[360px]:text-[26px] sm:text-[28px] md:text-[32px] font-medium tracking-tight text-white leading-[1.2] sm:leading-[1.25] max-w-2xl mb-8 sm:mb-10">
+          The biggest cost of growing without a strategy is the growth you never see
+        </h2>
+
+        {/* Brand & Contact Information */}
+        <div className="mb-8 sm:mb-10">
+          <p className="text-sm sm:text-base font-medium text-zinc-200 tracking-tight">
+            Growth with Hardik
+          </p>
+          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-normal text-zinc-400 mt-1">
             <a 
               href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} 
               target="_blank" 
               rel="noreferrer" 
-              className="inline-flex items-center gap-2 hover:text-blue-600 transition-all duration-200 hover:-translate-y-0.5 group"
+              className="hover:text-white transition-colors"
             >
-              <Instagram className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-              <span>Instagram</span>
+              Instagram
             </a>
-            <span className="text-gray-300 font-normal select-none">•</span>
+            <span className="text-zinc-600 select-none">·</span>
             <a 
               href={`mailto:${BRAND_EMAIL}`} 
-              className="inline-flex items-center gap-2 hover:text-blue-600 transition-all duration-200 hover:-translate-y-0.5 group"
+              className="hover:text-white transition-colors"
             >
-              <Mail className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-              <span>Email</span>
-            </a>
-            <span className="text-gray-300 font-normal select-none">•</span>
-            <a 
-              href={`https://wa.me/91${BRAND_PHONE}?text=${encodeURIComponent("Hi, I came across your website and would like to know more about your services.")}`} 
-              target="_blank" 
-              rel="noreferrer" 
-              className="inline-flex items-center gap-2 hover:text-emerald-600 transition-all duration-200 hover:-translate-y-0.5 group"
-            >
-              <MessageCircle className="w-4 h-4 text-gray-500 group-hover:text-emerald-600 transition-colors" />
-              <span>WhatsApp</span>
+              Email
             </a>
           </div>
         </div>
-        
-        {/* Thin Divider & Bottom Copyright / Legal Links Row */}
-        <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-gray-500 font-medium">
-          <p className="text-gray-500 text-center sm:text-left">
-            © 2026 GrowthWithHardik. Built with strategy, driven by results.
-          </p>
-          
-          <div className="flex items-center gap-6">
+
+        {/* Legal & Copyright */}
+        <div className="space-y-1 pt-6 border-t border-white/10 w-full">
+          <div className="flex items-center gap-2.5 text-xs text-zinc-400">
             <button 
               onClick={onShowPrivacy} 
-              className="hover:text-black transition-colors cursor-pointer"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               Privacy Policy
             </button>
+            <span className="text-zinc-600 select-none">·</span>
             <button 
               onClick={onShowTerms} 
-              className="hover:text-black transition-colors cursor-pointer"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               Terms of Service
             </button>
           </div>
+          <p className="text-xs text-zinc-500 font-normal">
+            © 2025 GrowthWithHardik
+          </p>
         </div>
       </div>
     </footer>
@@ -815,24 +684,43 @@ export default function App() {
   const [view, setView] = useState<ViewType>('home');
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
 
   const handleViewChange = (newView: ViewType) => {
     setView(newView);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenAuditModal = () => {
+    setIsAuditModalOpen(true);
+  };
+
+  const handleCloseAuditModal = () => {
+    setIsAuditModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-white selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
-      <Navbar activeView={view} onViewChange={handleViewChange} />
+      <Navbar 
+        activeView={view} 
+        onViewChange={handleViewChange} 
+        onRequestAudit={handleOpenAuditModal} 
+      />
       <main>
         <AnimatePresence mode="wait">
           {view === 'home' ? (
             <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <HomeView onViewServices={() => handleViewChange('services')} />
+              <HomeView 
+                onViewServices={() => handleViewChange('services')} 
+                onRequestAudit={handleOpenAuditModal} 
+              />
             </motion.div>
           ) : (
             <motion.div key="services" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ServicesPage onBack={() => handleViewChange('home')} />
+              <ServicesPage 
+                onBack={() => handleViewChange('home')} 
+                onRequestAudit={handleOpenAuditModal} 
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -879,8 +767,12 @@ export default function App() {
         }
       />
 
-      {/* Intelligent Lead Capture System with Exit Intent & Scroll/Time Triggers */}
-      <SmartLeadCaptureModal />
+      {/* Full-Screen / Modal Lead Qualification Form with Intelligent Triggers */}
+      <SmartLeadCaptureModal 
+        isOpen={isAuditModalOpen} 
+        onClose={handleCloseAuditModal} 
+        onOpen={handleOpenAuditModal} 
+      />
     </div>
   );
 }

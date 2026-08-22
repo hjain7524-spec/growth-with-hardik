@@ -66,12 +66,12 @@ export const TrustMarquee: React.FC = () => {
   const marqueeItems = [...GROWTH_METRICS, ...GROWTH_METRICS];
 
   return (
-    <div className="w-full bg-[#000000] text-white relative overflow-hidden select-none h-[70px] md:h-[80px] lg:h-[90px] flex items-center">
+    <div className="w-full bg-[#000000] text-white relative overflow-hidden select-none h-[56px] sm:h-[64px] md:h-[72px] flex items-center border-y border-zinc-900/60">
       {/* Left Edge Fade Mask */}
-      <div className="absolute left-0 inset-y-0 w-16 sm:w-28 md:w-40 bg-gradient-to-r from-[#000000] via-[#000000]/85 to-transparent z-20 pointer-events-none" />
+      <div className="absolute left-0 inset-y-0 w-12 sm:w-24 md:w-36 bg-gradient-to-r from-[#000000] via-[#000000]/85 to-transparent z-20 pointer-events-none" />
 
       {/* Right Edge Fade Mask */}
-      <div className="absolute right-0 inset-y-0 w-16 sm:w-28 md:w-40 bg-gradient-to-l from-[#000000] via-[#000000]/85 to-transparent z-20 pointer-events-none" />
+      <div className="absolute right-0 inset-y-0 w-12 sm:w-24 md:w-36 bg-gradient-to-l from-[#000000] via-[#000000]/85 to-transparent z-20 pointer-events-none" />
 
       {/* Marquee Track Container */}
       <div className="w-full h-full flex items-center overflow-hidden group">
@@ -79,18 +79,18 @@ export const TrustMarquee: React.FC = () => {
           {marqueeItems.map((metric, index) => (
             <React.Fragment key={`${metric.id}-${index}`}>
               {/* Metric Item */}
-              <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0 cursor-pointer transition-all duration-300 ease-out hover:brightness-125 hover:scale-[1.03]">
+              <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0 cursor-pointer transition-all duration-300 ease-out hover:brightness-125 hover:scale-[1.02]">
                 {/* Minimal Icon */}
                 <div className="p-1 sm:p-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 flex items-center justify-center">
                   {metric.icon}
                 </div>
 
                 {/* Typography */}
-                <div className="flex items-center gap-1.5 text-xs sm:text-sm md:text-base lg:text-lg tracking-tight font-medium whitespace-nowrap">
+                <div className="flex items-center gap-1.5 text-[13px] sm:text-sm lg:text-[15px] tracking-tight font-medium whitespace-nowrap">
                   {metric.prefix && (
-                    <span className="text-gray-200 font-normal">{metric.prefix}</span>
+                    <span className="text-gray-300 font-normal">{metric.prefix}</span>
                   )}
-                  <span className="bg-gradient-to-r from-white via-sky-100 to-sky-300 bg-clip-text text-transparent font-extrabold tracking-tight">
+                  <span className="bg-gradient-to-r from-white via-sky-100 to-sky-300 bg-clip-text text-transparent font-bold tracking-tight">
                     {metric.highlight}
                   </span>
                   {metric.label && (
@@ -100,7 +100,7 @@ export const TrustMarquee: React.FC = () => {
               </div>
 
               {/* Centered Separator Dot */}
-              <span className="text-sky-400/50 text-xs sm:text-sm md:text-base font-extrabold px-5 sm:px-8 md:px-10 lg:px-12 select-none flex-shrink-0">
+              <span className="text-sky-400/50 text-xs sm:text-sm font-extrabold px-4 sm:px-6 md:px-8 select-none flex-shrink-0">
                 •
               </span>
             </React.Fragment>
