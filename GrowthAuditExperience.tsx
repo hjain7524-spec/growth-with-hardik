@@ -290,25 +290,25 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#070709] text-white flex flex-col justify-between selection:bg-blue-600/30 selection:text-white">
+        <div className="fixed inset-0 z-50 bg-[#070709] text-white flex flex-col justify-between overflow-hidden selection:bg-blue-600/30 selection:text-white">
           {/* Subtle Ambient Background Gradient */}
           <div className="fixed inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[450px] bg-blue-600/10 rounded-full blur-[140px]" />
-            <div className="absolute -bottom-40 right-1/4 w-[500px] h-[400px] bg-indigo-600/8 rounded-full blur-[140px]" />
+            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[500px] h-[400px] bg-blue-600/10 rounded-full blur-[140px]" />
+            <div className="absolute -bottom-40 right-1/4 w-[400px] h-[350px] bg-indigo-600/8 rounded-full blur-[140px]" />
           </div>
 
-          {/* Top Header & Progress Bar */}
-          <header className="relative z-20 w-full max-w-3xl mx-auto px-4 sm:px-8 pt-3.5 sm:pt-8 pb-2 sm:pb-4 shrink-0">
-            <div className="flex items-center justify-between gap-4 mb-2 sm:mb-4">
+          {/* Top Header: Step Tracker & Thin Progress Bar */}
+          <header className="relative z-20 w-full max-w-xl mx-auto px-5 sm:px-8 pt-4 sm:pt-6 pb-2 shrink-0">
+            <div className="flex items-center justify-between gap-4 mb-3">
               {/* Step indicator */}
               {!isSubmitted ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] sm:text-sm font-semibold tracking-wide text-zinc-400 uppercase">
-                    Step <span className="text-white font-bold">0{currentStep}</span> of 0{TOTAL_STEPS}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] sm:text-xs font-bold tracking-wider text-zinc-400 uppercase">
+                    STEP <span className="text-white">0{currentStep}</span> OF 0{TOTAL_STEPS}
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-blue-400 text-xs sm:text-sm font-semibold tracking-wide uppercase">
+                <div className="flex items-center gap-1.5 text-blue-400 text-xs sm:text-sm font-semibold tracking-wide uppercase">
                   <Sparkles className="w-4 h-4" />
                   <span>Audit Diagnostics</span>
                 </div>
@@ -319,13 +319,13 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                 type="button"
                 onClick={handleClose}
                 aria-label="Close growth audit"
-                className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/5 hover:bg-white/10 active:bg-white/20 border border-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer touch-manipulation"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/5 hover:bg-white/10 active:bg-white/20 border border-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer touch-manipulation"
               >
-                <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Smooth Progress Bar */}
+            {/* Thin 2px Progress Bar */}
             {!isSubmitted && (
               <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
                 <motion.div
@@ -338,8 +338,8 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
             )}
           </header>
 
-          {/* Main Question / Form Container */}
-          <main className="relative z-10 w-full max-w-2xl mx-auto px-4 sm:px-8 py-3 sm:py-10 flex-grow flex flex-col justify-center">
+          {/* Main Question / Form Container - Consistent top-aligned offset */}
+          <main className="relative z-10 w-full max-w-xl mx-auto px-5 sm:px-8 pt-4 pb-6 flex-1 overflow-y-auto flex flex-col justify-start">
             {/* Honeypot hidden input */}
             <div style={{ display: 'none' }} aria-hidden="true">
               <input
@@ -360,24 +360,24 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-center py-6 sm:py-12 max-w-lg mx-auto"
+                  className="text-center py-8 sm:py-12 max-w-md mx-auto my-auto"
                 >
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-                    <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                    <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
                   </div>
 
-                  <h2 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white mb-2.5 sm:mb-4 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3 leading-tight">
                     Your Growth Audit Request is in.
                   </h2>
 
-                  <p className="text-zinc-400 text-xs sm:text-base md:text-[17px] font-normal leading-relaxed mb-6 sm:mb-8 max-w-md mx-auto">
+                  <p className="text-zinc-400 text-sm sm:text-base font-normal leading-relaxed mb-8">
                     We’ll review your Instagram and identify your biggest growth opportunity. If we’re a good fit, we’ll reach out with the next steps.
                   </p>
 
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-base px-7 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg transition-all active:scale-95 cursor-pointer touch-manipulation min-h-[44px] sm:min-h-[48px]"
+                    className="inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg transition-all active:scale-95 cursor-pointer touch-manipulation min-h-[48px]"
                   >
                     <span>Done</span>
                     <ArrowRight className="w-4 h-4" />
@@ -391,22 +391,27 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                   className="w-full"
                 >
                   {/* STEP 01: Name */}
                   {currentStep === 1 && (
-                    <div className="space-y-4 sm:space-y-8">
-                      <div>
-                        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight mb-1 sm:mb-2">
+                    <div>
+                      {/* Consistent Question Block */}
+                      <div className="mb-4 sm:mb-5">
+                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
+                          Step 01
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
                           What’s your name?
                         </h1>
-                        <p className="text-zinc-400 text-xs sm:text-base font-normal">
+                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
                           Let’s start with who we’re speaking with.
                         </p>
                       </div>
 
-                      <div className="space-y-3">
+                      {/* Input directly below */}
+                      <div>
                         <input
                           ref={inputRef as React.RefObject<HTMLInputElement>}
                           type="text"
@@ -418,7 +423,7 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                           }}
                           onKeyDown={handleKeyDownInput}
                           placeholder="Your name"
-                          className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-2xl px-4 sm:px-6 py-3.5 sm:py-5 text-base sm:text-xl md:text-2xl font-medium text-white placeholder:text-zinc-600 focus:outline-none transition-all shadow-inner"
+                          className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-base sm:text-lg font-medium text-white placeholder:text-zinc-600 focus:outline-none transition-all shadow-inner"
                         />
                       </div>
                     </div>
@@ -426,19 +431,24 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
 
                   {/* STEP 02: Instagram Username */}
                   {currentStep === 2 && (
-                    <div className="space-y-4 sm:space-y-8">
-                      <div>
-                        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight mb-1 sm:mb-2">
+                    <div>
+                      {/* Consistent Question Block */}
+                      <div className="mb-4 sm:mb-5">
+                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
+                          Step 02
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
                           What’s your Instagram username?
                         </h1>
-                        <p className="text-zinc-400 text-xs sm:text-base font-normal">
+                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
                           We’ll audit your profile, content pillars, and reach bottlenecks.
                         </p>
                       </div>
 
-                      <div className="space-y-3">
+                      {/* Input directly below */}
+                      <div>
                         <div className="relative flex items-center">
-                          <span className="absolute left-4 sm:left-6 text-base sm:text-xl md:text-2xl font-semibold text-zinc-500 select-none">
+                          <span className="absolute left-4 sm:left-5 text-base sm:text-lg font-semibold text-zinc-500 select-none">
                             @
                           </span>
                           <input
@@ -453,7 +463,7 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                             }}
                             onKeyDown={handleKeyDownInput}
                             placeholder="yourusername"
-                            className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-2xl pl-9 sm:pl-12 pr-4 sm:pr-6 py-3.5 sm:py-5 text-base sm:text-xl md:text-2xl font-medium text-white placeholder:text-zinc-600 focus:outline-none transition-all shadow-inner"
+                            className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-2xl pl-9 sm:pl-11 pr-4 sm:pr-5 py-3.5 sm:py-4 text-base sm:text-lg font-medium text-white placeholder:text-zinc-600 focus:outline-none transition-all shadow-inner"
                           />
                         </div>
                       </div>
@@ -462,17 +472,22 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
 
                   {/* STEP 03: Category / Role */}
                   {currentStep === 3 && (
-                    <div className="space-y-3 sm:space-y-8">
-                      <div>
-                        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight mb-0.5 sm:mb-2">
+                    <div>
+                      {/* Consistent Question Block */}
+                      <div className="mb-3.5 sm:mb-4">
+                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
+                          Step 03
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
                           What best describes you?
                         </h1>
-                        <p className="text-zinc-400 text-xs sm:text-base font-normal">
+                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
                           Select the category that best matches your presence.
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      {/* Compact full-width / 2-col option cards */}
+                      <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                         {CATEGORIES.map(cat => {
                           const isSelected = formData.category === cat;
                           return (
@@ -483,23 +498,23 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                                 setFormData(prev => ({ ...prev, category: cat }));
                                 if (stepError) setStepError(null);
                               }}
-                              className={`text-left p-3 sm:p-5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[48px] sm:min-h-[56px] ${
+                              className={`text-left px-3.5 py-3 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[46px] sm:min-h-[50px] ${
                                 isSelected
                                   ? 'bg-blue-600/15 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/40'
                                   : 'bg-white/[0.03] border-white/10 hover:border-white/20 text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                               }`}
                             >
-                              <span className="text-xs sm:text-lg font-semibold tracking-tight leading-snug">
+                              <span className="text-xs sm:text-sm font-semibold tracking-tight leading-snug">
                                 {cat}
                               </span>
                               <div
-                                className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ml-1.5 rounded-full border flex items-center justify-center transition-all ${
+                                className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 ml-1.5 rounded-full border flex items-center justify-center transition-all ${
                                   isSelected
                                     ? 'border-blue-500 bg-blue-600 text-white'
                                     : 'border-white/20 bg-white/5'
                                 }`}
                               >
-                                {isSelected && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                               </div>
                             </button>
                           );
@@ -510,17 +525,22 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
 
                   {/* STEP 04: Biggest Growth Challenge */}
                   {currentStep === 4 && (
-                    <div className="space-y-3 sm:space-y-7">
-                      <div>
-                        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight mb-0.5 sm:mb-2">
+                    <div>
+                      {/* Consistent Question Block */}
+                      <div className="mb-3.5 sm:mb-4">
+                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
+                          Step 04
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
                           What’s your biggest growth challenge?
                         </h1>
-                        <p className="text-zinc-400 text-xs sm:text-base font-normal">
+                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
                           Choose the challenge that best describes where you’re stuck.
                         </p>
                       </div>
 
-                      <div className="space-y-1.5 sm:space-y-2.5">
+                      {/* Compact full-width cards with clear selected states */}
+                      <div className="space-y-2 sm:space-y-2.5">
                         {CHALLENGES.map(item => {
                           const isSelected = formData.challenge === item;
                           return (
@@ -531,23 +551,23 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                                 setFormData(prev => ({ ...prev, challenge: item }));
                                 if (stepError) setStepError(null);
                               }}
-                              className={`w-full text-left px-3.5 py-2.5 sm:p-4.5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[46px] sm:min-h-[52px] ${
+                              className={`w-full text-left px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[44px] sm:min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600/15 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/40'
                                   : 'bg-white/[0.03] border-white/10 hover:border-white/20 text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                               }`}
                             >
-                              <span className="text-xs sm:text-base font-medium tracking-tight pr-2 leading-snug">
+                              <span className="text-xs sm:text-sm font-medium tracking-tight pr-2 leading-snug">
                                 {item}
                               </span>
                               <div
-                                className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 rounded-full border flex items-center justify-center transition-all ${
+                                className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 rounded-full border flex items-center justify-center transition-all ${
                                   isSelected
                                     ? 'border-blue-500 bg-blue-600 text-white'
                                     : 'border-white/20 bg-white/5'
                                 }`}
                               >
-                                {isSelected && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                               </div>
                             </button>
                           );
@@ -558,18 +578,22 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
 
                   {/* STEP 05: Support Level & Optional Business Description */}
                   {currentStep === 5 && (
-                    <div className="space-y-3 sm:space-y-7">
-                      <div>
-                        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight mb-0.5 sm:mb-2">
+                    <div>
+                      {/* Consistent Question Block */}
+                      <div className="mb-3.5 sm:mb-4">
+                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
+                          Step 05
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
                           What level of support are you looking for?
                         </h1>
-                        <p className="text-zinc-400 text-xs sm:text-base font-normal">
+                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
                           This helps us personalize our diagnostic strategy for your scale.
                         </p>
                       </div>
 
                       {/* Options */}
-                      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-3 sm:mb-4">
                         {SUPPORT_LEVELS.map(item => {
                           const isSelected = formData.supportLevel === item;
                           return (
@@ -580,39 +604,39 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                                 setFormData(prev => ({ ...prev, supportLevel: item }));
                                 if (stepError) setStepError(null);
                               }}
-                              className={`text-left p-2.5 sm:p-5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[48px] sm:min-h-[56px] ${
+                              className={`text-left px-3 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[46px] sm:min-h-[50px] ${
                                 isSelected
                                   ? 'bg-blue-600/15 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/40'
                                   : 'bg-white/[0.03] border-white/10 hover:border-white/20 text-zinc-300 hover:text-white hover:bg-white/[0.06]'
                               }`}
                             >
-                              <span className="text-[11px] sm:text-base font-semibold tracking-tight leading-snug">
+                              <span className="text-[11px] sm:text-sm font-semibold tracking-tight leading-snug">
                                 {item}
                               </span>
                               <div
-                                className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ml-1 rounded-full border flex items-center justify-center transition-all ${
+                                className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 ml-1 rounded-full border flex items-center justify-center transition-all ${
                                   isSelected
                                     ? 'border-blue-500 bg-blue-600 text-white'
                                     : 'border-white/20 bg-white/5'
                                 }`}
                               >
-                                {isSelected && <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />}
+                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                               </div>
                             </button>
                           );
                         })}
                       </div>
 
-                      {/* Final Optional Field: Tell us about your business */}
-                      <div className="pt-0.5 sm:pt-3 space-y-1 sm:space-y-2">
+                      {/* Optional textarea */}
+                      <div className="space-y-1">
                         <div className="flex items-center justify-between">
                           <label
                             htmlFor="businessDescription"
-                            className="text-[11px] sm:text-sm font-medium text-zinc-400"
+                            className="text-[11px] sm:text-xs font-medium text-zinc-400"
                           >
                             Tell us about your business
                           </label>
-                          <span className="text-[10px] sm:text-xs text-zinc-500 uppercase tracking-wider font-semibold">
+                          <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
                             Optional
                           </span>
                         </div>
@@ -624,7 +648,7 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                             setFormData(prev => ({ ...prev, businessDescription: e.target.value }))
                           }
                           placeholder="Anything we should know about your business, audience, or current situation…"
-                          className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-xs sm:text-sm font-normal text-white placeholder:text-zinc-600 focus:outline-none transition-all resize-none shadow-inner leading-relaxed min-h-[54px] sm:min-h-[70px] max-h-[64px] sm:max-h-[100px]"
+                          className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-xl p-2.5 sm:p-3 text-xs sm:text-sm font-normal text-white placeholder:text-zinc-600 focus:outline-none transition-all resize-none shadow-inner leading-relaxed min-h-[48px] sm:min-h-[56px] max-h-[64px]"
                         />
                       </div>
                     </div>
@@ -633,9 +657,9 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                   {/* Inline Error Notice */}
                   {stepError && (
                     <motion.div
-                      initial={{ opacity: 0, y: 6 }}
+                      initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-2.5 text-xs sm:text-sm font-medium text-red-400 flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-xl"
+                      className="mt-3 text-xs sm:text-sm font-medium text-red-400 flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3.5 py-2 rounded-xl"
                       role="alert"
                     >
                       <span>{stepError}</span>
@@ -646,31 +670,30 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
             </AnimatePresence>
           </main>
 
-          {/* Bottom Fixed Navigation Bar */}
+          {/* Fixed Bottom Action Bar: 56px height, Back on left, Next on right, above iPhone safe area */}
           {!isSubmitted && (
-            <footer className="relative z-20 w-full max-w-2xl mx-auto px-4 sm:px-8 py-3.5 sm:py-6 shrink-0 border-t border-white/[0.06] bg-[#070709]/90 backdrop-blur-xl">
-              <div className="flex items-center justify-between gap-3">
-                {/* Back Button */}
-                {currentStep > 1 ? (
+            <footer className="relative z-30 w-full max-w-xl mx-auto px-5 sm:px-8 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0 border-t border-white/[0.08] bg-[#070709]/95 backdrop-blur-xl">
+              <div className="flex items-center gap-3">
+                {/* Back Button on Left */}
+                {currentStep > 1 && (
                   <button
                     type="button"
                     onClick={handleBack}
                     disabled={isSubmitting}
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-zinc-400 hover:text-white px-2.5 py-2 rounded-xl transition-colors cursor-pointer touch-manipulation disabled:opacity-40"
+                    aria-label="Previous step"
+                    className="h-[56px] min-h-[56px] px-5 sm:px-6 rounded-2xl bg-white/[0.05] hover:bg-white/10 active:bg-white/15 border border-white/10 text-zinc-300 hover:text-white font-semibold text-xs sm:text-sm inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation disabled:opacity-40 shrink-0"
                   >
-                    <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <ArrowLeft className="w-4 h-4" />
                     <span>Back</span>
                   </button>
-                ) : (
-                  <div className="w-12" />
                 )}
 
-                {/* Next / Submit Button */}
+                {/* Next / Submit Button on Right */}
                 <button
                   type="button"
                   onClick={handleNext}
                   disabled={isSubmitting}
-                  className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs sm:text-sm md:text-base px-5 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg shadow-white/5 active:scale-95 transition-all cursor-pointer touch-manipulation disabled:opacity-60 min-h-[44px] sm:min-h-[50px]"
+                  className={`h-[56px] min-h-[56px] flex-1 px-6 sm:px-8 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-sm sm:text-base inline-flex items-center justify-center gap-2 shadow-lg shadow-white/5 active:scale-[0.98] transition-all cursor-pointer touch-manipulation disabled:opacity-60`}
                 >
                   {isSubmitting ? (
                     <>
@@ -680,12 +703,12 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                   ) : currentStep === TOTAL_STEPS ? (
                     <>
                       <span>Request My Growth Audit</span>
-                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   ) : (
                     <>
                       <span>Next</span>
-                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>

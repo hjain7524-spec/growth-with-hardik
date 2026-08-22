@@ -55,8 +55,9 @@ type ViewType = 'home' | 'services';
 const appleTransition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 const appleSpring = { type: "spring", stiffness: 100, damping: 20, mass: 1 };
 
-// Abstract "G" Growth Symbol: Flat vector, modern geometric with subtle electric-blue accent
-const AbstractGSymbol = ({ className = "w-full h-full" }: { className?: string }) => (
+// THE MASTER GROWTH NEXUS — Iconic Isometric Agency Identity
+// A precision-engineered 3-facet dimensional emblem communicating solid architectural foundation & breakthrough scale.
+const MasterGrowthLogo = ({ className = "w-full h-full" }: { className?: string }) => (
   <svg 
     viewBox="0 0 36 36" 
     fill="none" 
@@ -64,29 +65,36 @@ const AbstractGSymbol = ({ className = "w-full h-full" }: { className?: string }
     className={className}
     aria-hidden="true"
   >
-    {/* Abstract Geometric "G" Growth Glyph */}
+    {/* Upper Apex Plane - Electric Blue Growth Crown */}
     <path 
-      d="M26 10H14C9.58172 10 6 13.5817 6 18V18C6 22.4183 9.58172 26 14 26H22C26.4183 26 30 22.4183 30 18V15H18" 
-      stroke="#FFFFFF" 
-      strokeWidth="3.2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+      d="M18 4L28.8 10.3L18 16.6L7.2 10.3Z" 
+      fill="#3B82F6" 
     />
-    {/* Subtle Electric-Blue Precision Growth Accent */}
-    <circle cx="26" cy="10" r="2.2" fill="#2563EB" />
+    
+    {/* Left Foundation Monolith - Solid White */}
+    <path 
+      d="M6.5 13.2L16.5 19V31.8L6.5 26V13.2Z" 
+      fill="#FFFFFF" 
+    />
+    
+    {/* Right Scaling Monolith - Solid White */}
+    <path 
+      d="M19.5 19L29.5 13.2V26L19.5 31.8V19Z" 
+      fill="#FFFFFF" 
+    />
   </svg>
 );
 
 const BrandLogoImage = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
   const sizeClasses = {
-    sm: "w-7 h-7 sm:w-8 sm:h-8",
-    md: "w-8 h-8 sm:w-9 sm:h-9",
-    lg: "w-14 h-14 sm:w-16 sm:h-16"
+    sm: "w-7 h-7 sm:w-8 sm:h-8 p-1.5",
+    md: "w-8 h-8 sm:w-9 sm:h-9 p-1.5",
+    lg: "w-12 h-12 sm:w-14 sm:h-14 p-2.5"
   };
 
   return (
-    <div className={`${sizeClasses[size]} rounded-lg sm:rounded-xl bg-black overflow-hidden shrink-0 shadow-sm flex items-center justify-center p-1.5`}>
-      <AbstractGSymbol />
+    <div className={`${sizeClasses[size]} rounded-xl bg-zinc-950 border border-zinc-800/90 overflow-hidden shrink-0 shadow-sm flex items-center justify-center transition-all duration-300 hover:scale-105 select-none ring-1 ring-white/5`}>
+      <MasterGrowthLogo />
     </div>
   );
 };
@@ -624,11 +632,14 @@ const Footer = ({
         </h2>
 
         {/* Brand & Contact Information */}
-        <div className="mb-8 sm:mb-10">
-          <p className="text-sm sm:text-base font-medium text-zinc-200 tracking-tight">
-            Growth with Hardik
-          </p>
-          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-normal text-zinc-400 mt-1">
+        <div className="mb-8 sm:mb-10 flex flex-col items-start">
+          <div className="flex items-center gap-2.5 mb-2">
+            <BrandLogoImage size="sm" />
+            <span className="text-sm sm:text-base font-semibold text-white tracking-tight">
+              Growth with Hardik
+            </span>
+          </div>
+          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-normal text-zinc-400 mt-0.5">
             <a 
               href={`https://instagram.com/${INSTAGRAM_HANDLE.replace('@', '')}`} 
               target="_blank" 
