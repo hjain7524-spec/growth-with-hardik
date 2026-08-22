@@ -214,8 +214,12 @@ export const TestimonialsSection: React.FC = () => {
         </div>
 
         {/* Carousel Window Container (Bounded to max 420px on mobile, full width on desktop) */}
-        <div 
+        <motion.div 
           ref={containerRef}
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-[420px] sm:max-w-none mx-auto relative overflow-hidden py-1"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
@@ -224,66 +228,73 @@ export const TestimonialsSection: React.FC = () => {
           <motion.div
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.15}
+            dragElastic={0.2}
+            dragTransition={{ bounceStiffness: 350, bounceDamping: 32 }}
             onDragEnd={handleDragEnd}
             animate={{ x: targetX }}
             transition={
               isTransitioning
-                ? { duration: 0.45, ease: [0.25, 1, 0.5, 1] }
+                ? { type: "spring", stiffness: 240, damping: 28, mass: 0.85 }
                 : { duration: 0 }
             }
             onAnimationComplete={handleAnimationComplete}
             className="flex cursor-grab active:cursor-grabbing touch-pan-y will-change-transform"
             style={{ width: 'max-content' }}
           >
-            {virtualList.map((item, idx) => (
-              <div
-                key={`${item.id}-${idx}`}
-                style={{
-                  width: `${cardWidth}px`,
-                  minWidth: `${cardWidth}px`,
-                  maxWidth: `${cardWidth}px`,
-                  marginRight: `${gap}px`
-                }}
-                className="shrink-0 h-auto"
-              >
-                {/* Premium Black / Zinc-950 Card for high contrast & clarity */}
-                <div className="bg-zinc-950 border border-zinc-800/90 rounded-[1.5rem] p-6 sm:p-7 md:p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/20 relative h-full min-h-[220px] sm:min-h-[240px] select-none box-border">
-                  <div>
-                    {/* Top Row: Stars + Metric Tag if available */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <div className="flex text-amber-400" aria-label={`${item.rating || 5} out of 5 stars`}>
-                        {[...Array(item.rating || 5)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                        ))}
+            {virtualList.map((item, idx) => {
+              const textLength = item.content ? item.content.length : 0;
+              // Exceptionally short testimonials (< 90 chars) receive slightly more vertical inner padding and margin to balance card height
+              const isShort = textLength < 90;
+
+              return (
+                <div
+                  key={`${item.id}-${idx}`}
+                  style={{
+                    width: `${cardWidth}px`,
+                    minWidth: `${cardWidth}px`,
+                    maxWidth: `${cardWidth}px`,
+                    marginRight: `${gap}px`
+                  }}
+                  className="shrink-0 h-auto transition-transform duration-300 ease-out"
+                >
+                  {/* Premium Black / Zinc-950 Card with dynamic padding balance */}
+                  <div className={`bg-zinc-950 border border-zinc-800/90 rounded-[1.5rem] ${isShort ? 'p-7 sm:p-8 md:p-9' : 'p-6 sm:p-7 md:p-8'} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative h-full min-h-[220px] sm:min-h-[240px] select-none box-border`}>
+                    <div>
+                      {/* Top Row: Stars + Metric Tag if available */}
+                      <div className={`flex items-center justify-between gap-2 ${isShort ? 'mb-5 sm:mb-6' : 'mb-4'}`}>
+                        <div className="flex text-amber-400" aria-label={`${item.rating || 5} out of 5 stars`}>
+                          {[...Array(item.rating || 5)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                          ))}
+                        </div>
+                        {item.metricTag && (
+                          <span className="text-[11px] font-semibold text-zinc-300 bg-zinc-800/90 border border-zinc-700/60 px-2 py-0.5 rounded-md">
+                            {item.metricTag}
+                          </span>
+                        )}
                       </div>
-                      {item.metricTag && (
-                        <span className="text-[11px] font-semibold text-zinc-300 bg-zinc-850 bg-zinc-800/90 border border-zinc-700/60 px-2 py-0.5 rounded-md">
-                          {item.metricTag}
-                        </span>
-                      )}
+
+                      {/* Review Quote with Natural Word Wrap */}
+                      <p className={`text-zinc-200 font-normal ${isShort ? 'text-sm sm:text-base leading-[1.65] mb-6' : 'text-sm sm:text-[15px] leading-[1.6] mb-5'} break-words whitespace-normal`}>
+                        "{item.content}"
+                      </p>
                     </div>
 
-                    {/* Review Quote with Natural Word Wrap */}
-                    <p className="text-zinc-200 font-normal text-sm sm:text-[15px] leading-[1.6] break-words whitespace-normal mb-5">
-                      "{item.content}"
-                    </p>
-                  </div>
-
-                  {/* Client Info */}
-                  <div className="pt-3.5 border-t border-zinc-800/80 mt-auto">
-                    <h3 className="font-bold text-white text-sm sm:text-base tracking-tight truncate">
-                      {item.author}
-                    </h3>
-                    <p className="text-xs sm:text-[13px] text-zinc-400 font-medium mt-0.5 truncate">
-                      {item.role}
-                    </p>
+                    {/* Client Info */}
+                    <div className={`${isShort ? 'pt-4 sm:pt-5' : 'pt-3.5'} border-t border-zinc-800/80 mt-auto`}>
+                      <h3 className="font-bold text-white text-sm sm:text-base tracking-tight truncate">
+                        {item.author}
+                      </h3>
+                      <p className="text-xs sm:text-[13px] text-zinc-400 font-medium mt-0.5 truncate">
+                        {item.role}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Centered Pagination Dots Below Card */}
         {N > 0 && (

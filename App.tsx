@@ -293,105 +293,90 @@ interface ServicesPageProps {
   onRequestAudit: () => void;
 }
 
+const CORE_SERVICES = [
+  {
+    title: "Social Media Management",
+    description: "End-to-end account management, daily publishing, and community engagement.",
+  },
+  {
+    title: "Content Strategy",
+    description: "High-converting content pillars, viral hooks, and scripted formats.",
+  },
+  {
+    title: "Reels Editing",
+    description: "Retention-optimized editing, dynamic pacing, and editorial cuts.",
+  },
+  {
+    title: "Instagram Growth & Optimization",
+    description: "Profile positioning, bio optimization, and algorithmic distribution.",
+  },
+];
+
 const ServicesPage = ({ onBack, onRequestAudit }: ServicesPageProps) => {
   return (
     <motion.div 
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="pt-20 md:pt-32 pb-12 md:pb-24 px-5 md:px-6 min-h-screen bg-white"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-24 px-5 sm:px-6 min-h-screen bg-white"
     >
-      <div className="max-w-7xl mx-auto">
-        <motion.button 
+      <div className="max-w-3xl mx-auto">
+        {/* Back Link */}
+        <button 
           onClick={onBack}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="group flex items-center gap-2 text-gray-400 hover:text-black transition-colors font-bold mb-6 sm:mb-8 md:mb-12 touch-manipulation cursor-pointer"
+          className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-400 hover:text-black transition-colors mb-6 sm:mb-8 cursor-pointer touch-manipulation"
         >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <span>Back to Overview</span>
-        </motion.button>
+          <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+          <span>Back to Home</span>
+        </button>
 
-        <div className="mb-8 sm:mb-12 md:mb-16">
-          <motion.span 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-blue-600 font-bold tracking-[0.14em] uppercase text-[12px] sm:text-xs mb-2 sm:mb-2.5 block"
-          >
-            Capabilities
-          </motion.span>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, ...appleTransition }}
-            className="text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2.5 sm:mb-4 leading-[1.08]"
-          >
-            Premium Solutions <br className="hidden md:block" /> for Modern Brands.
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, ...appleTransition }}
-            className="text-[16px] sm:text-lg md:text-xl text-gray-500 max-w-[340px] sm:max-w-2xl font-normal sm:font-medium leading-[1.48] sm:leading-[1.55]"
-          >
-            Explore our ecosystem of high-performance growth services designed to scale your Instagram impact.
-          </motion.p>
+        {/* Minimal Header */}
+        <div className="mb-7 sm:mb-9 text-left">
+          <h1 className="text-2xl min-[360px]:text-[28px] sm:text-3xl md:text-4xl font-black tracking-tight text-zinc-950 mb-1.5 sm:mb-2">
+            Services
+          </h1>
+          <p className="text-zinc-500 text-xs sm:text-sm md:text-base font-normal leading-relaxed">
+            Simple systems built to grow your Instagram.
+          </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {SERVICES.map((service, idx) => {
-            const Icon = IconMap[service.iconName];
-            return (
-              <motion.div
-                key={service.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ ...appleTransition, delay: idx * 0.1 }}
-                whileHover={{ y: -8, scale: 1.01 }}
-                className="group relative bg-gray-50 p-5 sm:p-7 md:p-8 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] border border-transparent hover:border-blue-500/20 hover:bg-white hover:shadow-[0_30px_60px_-15px_rgba(59,130,246,0.12)] transition-all duration-300 overflow-hidden cursor-default flex flex-col"
+        {/* 4 Core Services Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 mb-8 sm:mb-10">
+          {CORE_SERVICES.map((service) => (
+            <div
+              key={service.title}
+              className="bg-zinc-950 hover:bg-black border border-zinc-800/90 hover:border-zinc-700 rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/20 group"
+            >
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-white tracking-tight mb-1.5">
+                  {service.title}
+                </h2>
+                <p className="text-zinc-400 text-xs sm:text-[13px] leading-relaxed mb-4 font-normal">
+                  {service.description}
+                </p>
+              </div>
+              
+              <button 
+                onClick={onRequestAudit}
+                className="text-xs sm:text-[13px] font-semibold text-zinc-300 hover:text-white transition-colors inline-flex items-center gap-1.5 self-start cursor-pointer group/link pt-1"
               >
-                <div className="transition-transform duration-500 group-hover:scale-[1.01] flex flex-col h-full">
-                  <motion.div 
-                    initial={{ scale: 0.5, opacity: 0, y: 15 }}
-                    whileInView={{ scale: 1, opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 400, 
-                      damping: 15, 
-                      delay: (idx * 0.1) + 0.3 
-                    }}
-                    className="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 text-black group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm"
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                  >
-                    <Icon size={22} className="md:w-6 md:h-6" />
-                  </motion.div>
-                  
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-black mb-1.5 sm:mb-2 tracking-tight group-hover:text-blue-600 transition-colors duration-200">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-500 leading-[1.55] font-medium text-xs sm:text-sm md:text-[15px] mb-5 sm:mb-6 flex-grow">
-                    {service.description}
-                  </p>
-                  
-                  <div className="mt-auto">
-                    <button 
-                      onClick={onRequestAudit}
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-black text-white font-black uppercase text-[10px] md:text-xs tracking-widest px-6 py-3.5 rounded-xl hover:bg-blue-600 transition-all active:scale-95 shadow-md shadow-black/5 touch-manipulation cursor-pointer min-h-[44px]"
-                    >
-                      <span>Request a Growth Audit</span>
-                      <ArrowUpRight size={14} />
-                    </button>
-                  </div>
-                </div>
+                <span>Learn More</span>
+                <span className="text-blue-400 font-bold transition-transform duration-200 group-hover/link:translate-x-0.5">→</span>
+              </button>
+            </div>
+          ))}
+        </div>
 
-                <div className="absolute top-0 right-0 p-6 md:p-8 opacity-0 group-hover:opacity-5 transition-all duration-500 pointer-events-none hidden md:block">
-                   <Icon size={110} />
-                </div>
-              </motion.div>
-            );
-          })}
+        {/* Single Primary CTA */}
+        <div className="text-center pt-2">
+          <button
+            onClick={onRequestAudit}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black text-white px-7 sm:px-9 h-[50px] sm:h-[54px] rounded-full text-xs sm:text-sm md:text-[15px] font-bold transition-all duration-200 hover:bg-zinc-800 active:scale-95 shadow-md shadow-black/10 cursor-pointer touch-manipulation"
+          >
+            <span>Request a Growth Audit</span>
+            <ArrowRight size={16} />
+          </button>
         </div>
       </div>
     </motion.div>
@@ -457,26 +442,25 @@ const HomeView = ({
           style={{ y: contentY, opacity: contentOpacity }}
           className="w-full max-w-4xl mx-auto flex flex-col items-center text-center relative z-10 will-change-transform"
         >
-          {/* Main Headline - Exactly 3 clean lines on mobile, 2 lines on desktop */}
+          {/* Main Headline - Perfectly balanced on 2 lines on mobile and desktop */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full text-[27px] min-[375px]:text-[30px] min-[414px]:text-[34px] sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight sm:tracking-[-0.025em] leading-[1.08] sm:leading-[1.05] text-gray-950 text-center"
+            className="w-full text-[25px] min-[360px]:text-[28px] min-[390px]:text-[31px] min-[428px]:text-[34px] sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight sm:tracking-[-0.025em] leading-[1.12] sm:leading-[1.06] text-gray-950 text-center"
           >
-            <span className="block">Grow Your Instagram.</span>
-            <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-1 sm:mt-1.5">
-              <span className="block sm:inline">Build a Personal</span>{' '}
-              <span className="block sm:inline">Brand.</span>
+            <span className="block whitespace-nowrap">Grow Your Instagram.</span>
+            <span className="block whitespace-nowrap bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-1 sm:mt-1.5">
+              Build a Personal Brand.
             </span>
           </motion.h1>
 
-          {/* Subheadline - Compact supporting copy */}
+          {/* Subheadline - Subtle, clean visual hierarchy */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[14px] sm:text-base md:text-lg text-gray-500 font-normal leading-[1.4] sm:leading-[1.5] mt-4 sm:mt-6 mb-6 sm:mb-7 max-w-[330px] sm:max-w-xl mx-auto text-center"
+            className="text-[13.5px] min-[360px]:text-[14px] sm:text-base md:text-lg text-zinc-500 font-normal leading-[1.45] sm:leading-[1.5] mt-3.5 sm:mt-4 mb-6 sm:mb-7 max-w-[310px] sm:max-w-xl mx-auto text-center"
           >
             Turn your content into consistent growth, stronger positioning, and qualified leads.
           </motion.p>
@@ -496,8 +480,17 @@ const HomeView = ({
               <ArrowRight className="group-hover:translate-x-1.5 transition-transform w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
+            {/* Highlighted Secondary CTA */}
+            <button
+              onClick={onViewServices}
+              className="mt-3 sm:mt-3.5 inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-zinc-100/90 hover:bg-zinc-200/90 border border-zinc-200 text-zinc-900 hover:text-black font-bold text-[13.5px] sm:text-[15px] tracking-tight transition-all duration-200 active:scale-95 shadow-xs group cursor-pointer touch-manipulation"
+            >
+              <span>Explore Our Services</span>
+              <span className="text-blue-600 font-bold transition-transform duration-200 group-hover:translate-x-0.5 text-sm sm:text-base">→</span>
+            </button>
+
             {/* Subtle Proof Statement Underneath CTA */}
-            <p className="mt-3 sm:mt-3.5 text-xs sm:text-[13px] font-medium text-gray-400 sm:text-gray-500 tracking-normal text-center select-none">
+            <p className="mt-2.5 sm:mt-3 text-xs sm:text-[13px] font-medium text-gray-400 sm:text-gray-500 tracking-normal text-center select-none">
               65,000+ creators analyzed
             </p>
           </motion.div>
