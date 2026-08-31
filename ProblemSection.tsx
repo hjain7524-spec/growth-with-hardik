@@ -51,15 +51,15 @@ export const ProblemSection: React.FC = () => {
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-5 sm:mb-8 md:mb-10">
+        <div className="text-center mb-6 sm:mb-8 md:mb-10">
           <motion.h2
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-[26px] min-[360px]:text-[28px] sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-1.5 sm:mb-2.5 leading-[1.08] sm:leading-[1.12] max-w-[320px] sm:max-w-none mx-auto"
+            className="text-[28px] min-[360px]:text-[32px] sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-2.5 sm:mb-3 leading-[1.1] sm:leading-[1.12] max-w-[340px] sm:max-w-none mx-auto"
           >
-            What’s Holding Your Instagram Back?
+            Why Isn’t Your Instagram Growing?
           </motion.h2>
 
           <motion.p
@@ -67,14 +67,14 @@ export const ProblemSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.08 }}
-            className="text-gray-400 text-[14px] sm:text-base md:text-lg font-normal max-w-[320px] sm:max-w-xl mx-auto leading-[1.4] sm:leading-[1.5]"
+            className="text-gray-400 text-[15px] min-[360px]:text-[16px] sm:text-base md:text-lg font-normal max-w-[340px] sm:max-w-xl mx-auto leading-[1.45] sm:leading-[1.5]"
           >
             Here are the biggest bottlenecks holding creators back.
           </motion.p>
         </div>
 
-        {/* Accordion Cards Container - Clean 1-Column Layout */}
-        <div className="space-y-2 sm:space-y-2.5 max-w-3xl mx-auto">
+        {/* Accordion Cards Container - Clean 1-Column Layout with generous mobile sizing */}
+        <div className="space-y-3 sm:space-y-3.5 max-w-3xl mx-auto">
           {PROBLEM_ITEMS.map((item, index) => {
             const isOpen = openIndex === index;
 
@@ -85,7 +85,7 @@ export const ProblemSection: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: index * 0.02 }}
-                className={`rounded-xl sm:rounded-2xl transition-all duration-300 border ${
+                className={`rounded-2xl transition-all duration-300 border ${
                   isOpen
                     ? 'bg-zinc-900/90 border-blue-500/40 shadow-lg shadow-blue-950/20'
                     : 'bg-zinc-950/80 hover:bg-zinc-900/70 border-zinc-800/80 hover:border-zinc-700/80'
@@ -95,13 +95,13 @@ export const ProblemSection: React.FC = () => {
                   type="button"
                   onClick={() => toggleAccordion(index)}
                   aria-expanded={isOpen}
-                  className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl sm:rounded-2xl cursor-pointer group min-h-[46px] sm:min-h-[52px] touch-manipulation"
+                  className="w-full text-left px-4.5 sm:px-6 py-4 sm:py-4.5 flex items-center justify-between gap-3 sm:gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl cursor-pointer group min-h-[56px] sm:min-h-[60px] touch-manipulation"
                 >
-                  <div className="flex items-center gap-2.5 sm:gap-4 pr-2">
-                    <span className={`text-xs sm:text-sm font-extrabold transition-colors ${isOpen ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-400'}`}>
+                  <div className="flex items-center gap-3 sm:gap-4 pr-2">
+                    <span className={`text-[13.5px] sm:text-sm font-extrabold transition-colors ${isOpen ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-400'}`}>
                       0{index + 1}
                     </span>
-                    <h3 className={`text-[14px] sm:text-base md:text-[17px] font-bold tracking-tight transition-colors ${isOpen ? 'text-white' : 'text-gray-200 group-hover:text-white'}`}>
+                    <h3 className={`text-[15.5px] min-[360px]:text-[16.5px] sm:text-lg font-bold tracking-tight transition-colors leading-snug ${isOpen ? 'text-white' : 'text-gray-200 group-hover:text-white'}`}>
                       {item.title}
                     </h3>
                   </div>
@@ -109,13 +109,13 @@ export const ProblemSection: React.FC = () => {
                   <motion.div
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors ${
+                    className={`flex-shrink-0 w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors ${
                       isOpen
                         ? 'bg-blue-600 text-white'
                         : 'bg-zinc-800/80 text-gray-400 group-hover:bg-zinc-700 group-hover:text-white'
                     }`}
                   >
-                    <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <ChevronDown className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </motion.div>
                 </button>
 
@@ -128,7 +128,7 @@ export const ProblemSection: React.FC = () => {
                       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 sm:px-6 pb-3.5 sm:pb-5 pt-0.5 text-gray-300 font-normal text-xs sm:text-base leading-[1.5] pl-8 sm:pl-14 pr-4 sm:pr-8 border-t border-zinc-800/50 mt-0.5">
+                      <div className="px-4.5 sm:px-6 pb-4 sm:pb-5 pt-1.5 text-gray-300 font-normal text-[14.5px] sm:text-base leading-[1.6] pl-9 sm:pl-14 pr-4.5 sm:pr-8 border-t border-zinc-800/60 mt-0.5">
                         <p className="max-w-2xl text-gray-300">
                           {item.content}
                         </p>

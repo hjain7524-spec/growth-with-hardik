@@ -20,7 +20,9 @@ export const BRAND_NAME = "Growth with Hardik";
 export const BRAND_EMAIL = "growthwithhardik@gmail.com";
 export const BRAND_PHONE = "7455067426";
 export const INSTAGRAM_HANDLE = "@growthwithhardik";
-export const FORMSPREE_ENDPOINT = "https://formspree.io/f/xnjqwnkb";
+export const SPLITFORMS_ENDPOINT = "https://splitforms.com/api/submit";
+export const SPLITFORMS_ACCESS_KEY = "006e8d38c63c4f17a7acfa6d396d9f49";
+export const DESTINATION_EMAIL = "Growthwithhardik@gmail.com";
 
 export const SERVICES: Service[] = [
   {

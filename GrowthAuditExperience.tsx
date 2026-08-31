@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ArrowLeft, Check, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
-import { FORMSPREE_ENDPOINT } from './constants';
+import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY, DESTINATION_EMAIL } from './constants';
 
 export interface GrowthAuditData {
   name: string;
@@ -218,6 +218,8 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
   };
 
   const submitForm = async () => {
+    if (isSubmitting) return;
+
     // Honeypot check
     if (formData.hp_website) {
       setIsSubmitted(true);
@@ -232,26 +234,30 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
     const cleanName = formData.name.trim();
 
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
+      const response = await fetch(SPLITFORMS_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
+          access_key: SPLITFORMS_ACCESS_KEY,
           name: cleanName,
           instagramUsername: `@${cleanHandle}`,
           roleCategory: formData.category,
           growthChallenge: formData.challenge,
           supportLevel: formData.supportLevel,
           businessDescription: formData.businessDescription.trim() || 'None provided',
+          destination_email: DESTINATION_EMAIL,
+          from_name: cleanName,
           _subject: `New Growth Audit Request: ${cleanName} (@${cleanHandle})`
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to submit request');
+      const responseData = await response.json().catch(() => null);
+
+      if (!response.ok || (responseData && responseData.success === false)) {
+        throw new Error(responseData?.message || responseData?.error || 'Failed to submit request. Please try again.');
       }
 
       setIsSubmitted(true);
@@ -264,7 +270,7 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
         // Fallback
       }
     } catch (err: any) {
-      setStepError(err?.message || 'Something went wrong. Please try again.');
+      setStepError(err?.message || 'Something went wrong. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }

@@ -7,7 +7,7 @@ import {
   ArrowRight,
   CheckCircle2
 } from 'lucide-react';
-import { FORMSPREE_ENDPOINT } from './constants';
+import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY, DESTINATION_EMAIL } from './constants';
 
 export interface FormState {
   fullName: string;
@@ -240,27 +240,37 @@ export const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ on
     setErrors(prev => ({ ...prev, general: undefined }));
 
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
+      const cleanHandle = formData.instagramUsername.trim().replace(/^@/, '');
+      const cleanName = formData.fullName.trim();
+      const response = await fetch(SPLITFORMS_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          fullName: formData.fullName.trim(),
+          access_key: SPLITFORMS_ACCESS_KEY,
+          fullName: cleanName,
+          name: cleanName,
           phone: formData.phone.trim(),
-          instagramUsername: formData.instagramUsername.trim().replace(/^@/, ''),
+          instagramUsername: `@${cleanHandle}`,
           category: formData.category,
+          roleCategory: formData.category,
           challenge: formData.challenge,
+          growthChallenge: formData.challenge,
           supportLevel: formData.supportLevel,
           businessDetails: formData.businessDetails?.trim() || 'None',
-          _subject: `New Growth Audit Request: ${formData.fullName.trim()} (@${formData.instagramUsername.trim().replace(/^@/, '')})`
+          businessDescription: formData.businessDetails?.trim() || 'None',
+          destination_email: DESTINATION_EMAIL,
+          from_name: cleanName,
+          _subject: `New Growth Audit Request: ${cleanName} (@${cleanHandle})`
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to submit form');
+      const responseData = await response.json().catch(() => null);
+
+      if (!response.ok || (responseData && responseData.success === false)) {
+        throw new Error(responseData?.message || responseData?.error || 'Failed to submit form. Please try again.');
       }
 
       setIsSubmitted(true);

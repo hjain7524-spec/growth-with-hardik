@@ -459,7 +459,7 @@ const HomeView = ({
           >
             <span className="block whitespace-nowrap">Grow Your Instagram.</span>
             <span className="block whitespace-nowrap bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-1 sm:mt-1.5">
-              Build a Personal Brand.
+              Build a Brand That Matters
             </span>
           </motion.h1>
 
