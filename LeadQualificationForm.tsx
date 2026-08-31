@@ -8,6 +8,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY, DESTINATION_EMAIL } from './constants';
+import { trackGrowthAuditSubmit } from './analytics';
 
 export interface FormState {
   fullName: string;
@@ -274,6 +275,13 @@ export const LeadQualificationForm: React.FC<LeadQualificationFormProps> = ({ on
       }
 
       setIsSubmitted(true);
+      trackGrowthAuditSubmit({
+        category: formData.category,
+        supportLevel: formData.supportLevel,
+        challenge: formData.challenge,
+        instagramHandle: cleanHandle,
+        name: cleanName
+      });
       if (onSuccess) {
         onSuccess();
       }

@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth with Hardik | Instagram Growth Studio</title>
+    <!-- Google Analytics 4 (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GROWTHHARDIK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-GROWTHHARDIK', { send_page_view: true });
+    </script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36' fill='none'%3E%3Crect width='36' height='36' rx='8' fill='%2309090b'/%3E%3Cpath d='M18 4L28.8 10.3L18 16.6L7.2 10.3Z' fill='%233B82F6'/%3E%3Cpath d='M6.5 13.2L16.5 19V31.8L6.5 26V13.2Z' fill='%23FFFFFF'/%3E%3Cpath d='M19.5 19L29.5 13.2V26L19.5 31.8V19Z' fill='%23FFFFFF'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,6 +36,22 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        button,
+        a,
+        [role="button"],
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        summary,
+        select,
+        .cursor-pointer,
+        .touch-manipulation,
+        [onclick],
+        article,
+        .card-clickable {
+            touch-action: manipulation;
         }
 
         @keyframes trustMarquee {

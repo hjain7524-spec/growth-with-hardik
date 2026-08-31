@@ -6,6 +6,7 @@ import {
   ChevronRight 
 } from 'lucide-react';
 import { TESTIMONIALS } from './constants';
+import { trackCaseStudyClick } from './analytics';
 
 const AUTOPLAY_INTERVAL = 6000; // 6 seconds
 
@@ -161,7 +162,10 @@ export const TestimonialsSection: React.FC = () => {
           {/* Minimal Text Tabs: All | Creators | Businesses */}
           <div className="inline-flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium text-zinc-400">
             <button
-              onClick={() => setActiveFilter('all')}
+              onClick={() => {
+                setActiveFilter('all');
+                trackCaseStudyClick('filter_all', 'All Case Studies', 'all');
+              }}
               className={`transition-colors cursor-pointer py-1 ${
                 activeFilter === 'all'
                   ? 'text-zinc-900 font-bold'
@@ -172,7 +176,10 @@ export const TestimonialsSection: React.FC = () => {
             </button>
             <span className="text-zinc-300 select-none">•</span>
             <button
-              onClick={() => setActiveFilter('creator')}
+              onClick={() => {
+                setActiveFilter('creator');
+                trackCaseStudyClick('filter_creator', 'Creator Case Studies', 'creator');
+              }}
               className={`transition-colors cursor-pointer py-1 ${
                 activeFilter === 'creator'
                   ? 'text-zinc-900 font-bold'
@@ -183,7 +190,10 @@ export const TestimonialsSection: React.FC = () => {
             </button>
             <span className="text-zinc-300 select-none">•</span>
             <button
-              onClick={() => setActiveFilter('business')}
+              onClick={() => {
+                setActiveFilter('business');
+                trackCaseStudyClick('filter_business', 'Business Case Studies', 'business');
+              }}
               className={`transition-colors cursor-pointer py-1 ${
                 activeFilter === 'business'
                   ? 'text-zinc-900 font-bold'
@@ -258,7 +268,10 @@ export const TestimonialsSection: React.FC = () => {
                   className="shrink-0 h-auto transition-transform duration-300 ease-out"
                 >
                   {/* Premium Black / Zinc-950 Card with dynamic padding balance */}
-                  <div className={`bg-zinc-950 border border-zinc-800/90 rounded-[1.5rem] ${isShort ? 'p-7 sm:p-8 md:p-9' : 'p-6 sm:p-7 md:p-8'} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative h-full min-h-[220px] sm:min-h-[240px] select-none box-border`}>
+                  <div 
+                    onClick={() => trackCaseStudyClick(item.id, item.author, item.category)}
+                    className={`bg-zinc-950 border border-zinc-800/90 rounded-[1.5rem] ${isShort ? 'p-7 sm:p-8 md:p-9' : 'p-6 sm:p-7 md:p-8'} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative h-full min-h-[220px] sm:min-h-[240px] select-none box-border cursor-pointer`}
+                  >
                     <div>
                       {/* Top Row: Stars + Metric Tag if available */}
                       <div className={`flex items-center justify-between gap-2 ${isShort ? 'mb-5 sm:mb-6' : 'mb-4'}`}>

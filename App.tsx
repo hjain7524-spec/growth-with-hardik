@@ -1,11 +1,21 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { motion, AnimatePresence, useInView, animate, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import { TrustMarquee } from './TrustMarquee';
+import { ProofStatsSection } from './ProofStatsSection';
 import { ProblemSection } from './ProblemSection';
+import { CreatorComparisonSection } from './CreatorComparisonSection';
 import { GrowthSystem } from './GrowthSystem';
-import { TestimonialsSection } from './TestimonialsSection';
-import { SmartLeadCaptureModal } from './SmartLeadCaptureModal';
+import { StillNotSureSection } from './StillNotSureSection';
+import { trackGrowthPlanClick, trackGrowthAuditClick, trackPricingCtaClick, trackPageView } from './analytics';
+
+// Code-split heavy below-the-fold and modal components for faster initial load
+const TestimonialsSection = lazy(() => 
+  import('./TestimonialsSection').then(module => ({ default: module.TestimonialsSection }))
+);
+const SmartLeadCaptureModal = lazy(() => 
+  import('./SmartLeadCaptureModal').then(module => ({ default: module.SmartLeadCaptureModal }))
+);
 import { 
   ArrowRight, 
   Menu, 
@@ -175,7 +185,8 @@ const Navbar = ({
     }
   };
 
-  const handleAuditClick = () => {
+  const handleAuditClick = (location: string = 'navbar_desktop') => {
+    trackGrowthAuditClick(location, 'Free Growth Audit');
     setIsMobileMenuOpen(false);
     onRequestAudit();
   };
@@ -196,10 +207,10 @@ const Navbar = ({
             </button>
           ))}
           <button 
-            onClick={handleAuditClick}
+            onClick={() => handleAuditClick('navbar_desktop')}
             className="bg-black text-white px-6 py-3 rounded-full text-sm font-black hover:bg-gray-800 transition-all active:scale-95 shadow-xl shadow-black/10 cursor-pointer touch-manipulation flex items-center gap-2"
           >
-            <span>Request a Growth Audit</span>
+            <span>Free Growth Audit</span>
             <ArrowRight size={15} />
           </button>
         </div>
@@ -233,9 +244,9 @@ const Navbar = ({
               ))}
               <button 
                 className="bg-black text-white px-6 py-4 rounded-2xl text-center font-black text-lg active:scale-[0.98] transition-transform mt-2 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
-                onClick={handleAuditClick}
+                onClick={() => handleAuditClick('navbar_mobile_menu')}
               >
-                <span>Request a Growth Audit</span>
+                <span>Free Growth Audit</span>
                 <ArrowRight size={18} />
               </button>
               <div className="flex justify-center gap-8 pt-4 border-t border-gray-100">
@@ -366,7 +377,10 @@ const ServicesPage = ({ onBack, onRequestAudit }: ServicesPageProps) => {
               </div>
               
               <button 
-                onClick={onRequestAudit}
+                onClick={() => {
+                  trackGrowthAuditClick(`services_card_${service.title.toLowerCase().replace(/\s+/g, '_')}`, `Learn More - ${service.title}`);
+                  onRequestAudit();
+                }}
                 className="text-xs sm:text-[13px] font-semibold text-zinc-300 hover:text-white transition-colors inline-flex items-center gap-1.5 self-start cursor-pointer group/link pt-1"
               >
                 <span>Learn More</span>
@@ -379,10 +393,13 @@ const ServicesPage = ({ onBack, onRequestAudit }: ServicesPageProps) => {
         {/* Single Primary CTA */}
         <div className="text-center pt-2">
           <button
-            onClick={onRequestAudit}
+            onClick={() => {
+              trackGrowthAuditClick('services_page_bottom_cta', 'Free Growth Audit');
+              onRequestAudit();
+            }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black text-white px-7 sm:px-9 h-[50px] sm:h-[54px] rounded-full text-xs sm:text-sm md:text-[15px] font-bold transition-all duration-200 hover:bg-zinc-800 active:scale-95 shadow-md shadow-black/10 cursor-pointer touch-manipulation"
           >
-            <span>Request a Growth Audit</span>
+            <span>Free Growth Audit</span>
             <ArrowRight size={16} />
           </button>
         </div>
@@ -459,7 +476,7 @@ const HomeView = ({
           >
             <span className="block whitespace-nowrap">Grow Your Instagram.</span>
             <span className="block whitespace-nowrap bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-1 sm:mt-1.5">
-              Build a Brand That Matters
+              Build a Personal Brand.
             </span>
           </motion.h1>
 
@@ -481,10 +498,13 @@ const HomeView = ({
             className="flex flex-col items-center w-full"
           >
             <button
-              onClick={onRequestAudit}
+              onClick={() => {
+                trackGrowthAuditClick('hero_primary_cta', 'Free Growth Audit');
+                onRequestAudit();
+              }}
               className="group relative bg-gray-950 text-white px-7 sm:px-9 h-[54px] sm:h-[58px] rounded-full text-[15px] sm:text-base md:text-[17px] font-black transition-all duration-300 hover:bg-black hover:shadow-xl hover:shadow-blue-500/15 flex items-center justify-center gap-2.5 sm:gap-3 active:scale-95 touch-manipulation cursor-pointer w-full max-w-[360px] sm:w-auto"
             >
-              <span>Request a Growth Audit</span>
+              <span>Free Growth Audit</span>
               <ArrowRight className="group-hover:translate-x-1.5 transition-transform w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
@@ -508,8 +528,14 @@ const HomeView = ({
       {/* Moving Trust Strip Section */}
       <TrustMarquee />
 
+      {/* Proof Statistics Section: Big Numbers Credibility */}
+      <ProofStatsSection />
+
       {/* Problem Identification FAQ-style Section */}
       <ProblemSection />
+
+      {/* Creator Comparison Section: Which Creator Are You? */}
+      <CreatorComparisonSection onRequestAudit={onRequestAudit} />
 
       {/* Interactive Growth System Section */}
       <GrowthSystem onRequestAudit={onRequestAudit} />
@@ -522,9 +548,9 @@ const HomeView = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={appleTransition}
-              className="text-[30px] sm:text-4xl md:text-5xl lg:text-[50px] font-black tracking-tight mb-1.5 sm:mb-2.5 leading-[1.1]"
+              className="text-[22px] min-[360px]:text-[25px] min-[400px]:text-[28px] sm:text-4xl md:text-5xl lg:text-[50px] font-black tracking-tight mb-1.5 sm:mb-2.5 leading-[1.1] whitespace-nowrap"
             >
-              Transparent pricing.
+              Choose Your Growth Plan
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -583,7 +609,11 @@ const HomeView = ({
                   </ul>
 
                   <button 
-                    onClick={onRequestAudit}
+                    onClick={() => {
+                      trackPricingCtaClick(plan.name, plan.ctaText || 'Start Growing');
+                      trackGrowthPlanClick(`pricing_plan_${plan.name.toLowerCase().replace(/\s+/g, '_')}`, plan.ctaText || 'Start Growing');
+                      onRequestAudit();
+                    }}
                     className={`block w-full text-center py-3 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl font-black transition-all text-xs sm:text-sm tracking-wider uppercase active:scale-[0.98] min-h-[46px] sm:min-h-[50px] touch-manipulation cursor-pointer ${
                       plan.highlighted 
                         ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-600/20' 
@@ -608,7 +638,12 @@ const HomeView = ({
       </section>
 
       {/* Modern Testimonials Section */}
-      <TestimonialsSection />
+      <Suspense fallback={<div className="min-h-[360px] bg-white" />}>
+        <TestimonialsSection />
+      </Suspense>
+
+      {/* Still Not Sure? FAQ & Confidence Section */}
+      <StillNotSureSection onRequestAudit={onRequestAudit} />
     </>
   );
 };
@@ -690,9 +725,14 @@ export default function App() {
   const [showTerms, setShowTerms] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
 
+  useEffect(() => {
+    trackPageView(window.location.pathname, document.title);
+  }, []);
+
   const handleViewChange = (newView: ViewType) => {
     setView(newView);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    trackPageView(newView === 'home' ? '/' : '/services', newView === 'home' ? 'Growth with Hardik' : 'Services - Growth with Hardik');
   };
 
   const handleOpenAuditModal = () => {
@@ -772,11 +812,13 @@ export default function App() {
       />
 
       {/* Full-Screen / Modal Lead Qualification Form with Intelligent Triggers */}
-      <SmartLeadCaptureModal 
-        isOpen={isAuditModalOpen} 
-        onClose={handleCloseAuditModal} 
-        onOpen={handleOpenAuditModal} 
-      />
+      <Suspense fallback={null}>
+        <SmartLeadCaptureModal 
+          isOpen={isAuditModalOpen} 
+          onClose={handleCloseAuditModal} 
+          onOpen={handleOpenAuditModal} 
+        />
+      </Suspense>
     </div>
   );
 }

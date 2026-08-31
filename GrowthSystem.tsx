@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ArrowDown, ArrowRight, MessageSquare, Sparkles, CheckCircle } from 'lucide-react';
+import { trackGrowthAuditClick } from './analytics';
 
 interface Step {
   stepNumber: string;
@@ -49,6 +50,7 @@ export const GrowthSystem: React.FC<GrowthSystemProps> = ({ onRequestAudit }) =>
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleRequestAudit = () => {
+    trackGrowthAuditClick('growth_system_process', 'Free Growth Audit');
     if (onRequestAudit) {
       onRequestAudit();
     } else {
@@ -184,7 +186,7 @@ export const GrowthSystem: React.FC<GrowthSystemProps> = ({ onRequestAudit }) =>
                         whileTap={{ scale: 0.97 }}
                         className="inline-flex items-center justify-center gap-2.5 sm:gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-600 text-white font-black text-[15px] sm:text-base md:text-[17px] px-7 sm:px-8 py-3.5 sm:py-4.5 rounded-full shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer touch-manipulation min-h-[48px] sm:min-h-[52px]"
                       >
-                        <span>Request a Growth Audit</span>
+                        <span>Free Growth Audit</span>
                         <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </motion.button>
                     </div>

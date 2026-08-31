@@ -1,16 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, ArrowLeft, Check, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, Loader2, CheckCircle2, ArrowRight, AlertCircle, ChevronDown } from 'lucide-react';
 import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY, DESTINATION_EMAIL } from './constants';
+import { trackFormOpen, trackFormStart, trackFormSubmit, getStoredUtmParams } from './analytics';
 
-export interface GrowthAuditData {
+export interface GrowthPlanFormData {
   name: string;
   instagramUsername: string;
   category: string;
+  goal: string;
   challenge: string;
-  supportLevel: string;
-  businessDescription: string;
+  countryCode: string;
+  phoneNumber: string;
   hp_website?: string;
+}
+
+interface FormErrors {
+  name?: string;
+  instagramUsername?: string;
+  category?: string;
+  goal?: string;
+  challenge?: string;
+  phoneNumber?: string;
+  general?: string;
 }
 
 interface GrowthAuditExperienceProps {
@@ -19,81 +31,99 @@ interface GrowthAuditExperienceProps {
   onSuccess?: () => void;
 }
 
+const COUNTRY_CODES = [
+  { code: '+91', country: 'India', flag: '🇮🇳' },
+  { code: '+1', country: 'US / Canada', flag: '🇺🇸' },
+  { code: '+44', country: 'UK', flag: '🇬🇧' },
+  { code: '+971', country: 'UAE', flag: '🇦🇪' },
+  { code: '+61', country: 'Australia', flag: '🇦🇺' },
+  { code: '+65', country: 'Singapore', flag: '🇸🇬' },
+  { code: '+49', country: 'Germany', flag: '🇩🇪' },
+  { code: '+33', country: 'France', flag: '🇫🇷' },
+  { code: '+34', country: 'Spain', flag: '🇪🇸' },
+  { code: '+39', country: 'Italy', flag: '🇮🇹' },
+  { code: '+31', country: 'Netherlands', flag: '🇳🇱' },
+  { code: '+41', country: 'Switzerland', flag: '🇨🇭' },
+  { code: '+46', country: 'Sweden', flag: '🇸🇪' },
+  { code: '+64', country: 'New Zealand', flag: '🇳🇿' },
+  { code: '+353', country: 'Ireland', flag: '🇮🇪' },
+  { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
+  { code: '+974', country: 'Qatar', flag: '🇶🇦' },
+  { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
+  { code: '+968', country: 'Oman', flag: '🇴🇲' },
+  { code: '+62', country: 'Indonesia', flag: '🇮🇩' },
+  { code: '+60', country: 'Malaysia', flag: '🇲🇾' },
+  { code: '+63', country: 'Philippines', flag: '🇵🇭' },
+  { code: '+27', country: 'South Africa', flag: '🇿🇦' },
+  { code: '+234', country: 'Nigeria', flag: '🇳🇬' },
+  { code: '+55', country: 'Brazil', flag: '🇧🇷' },
+  { code: '+52', country: 'Mexico', flag: '🇲🇽' },
+  { code: '+90', country: 'Turkey', flag: '🇹🇷' },
+  { code: '+81', country: 'Japan', flag: '🇯🇵' },
+  { code: '+82', country: 'South Korea', flag: '🇰🇷' },
+  { code: '+92', country: 'Pakistan', flag: '🇵🇰' },
+  { code: '+880', country: 'Bangladesh', flag: '🇧🇩' },
+  { code: '+977', country: 'Nepal', flag: '🇳🇵' },
+  { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' }
+];
+
 const CATEGORIES = [
   'Creator',
-  'Personal Brand',
-  'Business',
   'Coach / Consultant',
-  'Brand',
+  'Personal Brand',
+  'Business / Brand',
+  'Agency / Freelancer',
+  'Other'
+];
+
+const GOALS = [
+  'Grow my followers',
+  'Get more leads',
+  'Get more clients',
+  'Build my personal brand',
+  'Improve my content',
   'Other'
 ];
 
 const CHALLENGES = [
-  'Not getting enough reach',
-  'Content isn’t converting',
-  'Don’t know what to post',
-  'Struggling with consistency',
-  'Getting leads but not enough clients',
-  'Need a complete content system'
+  "I'm not growing",
+  "I'm getting views but no leads",
+  "I don't know what content to create",
+  "I can't stay consistent",
+  "My content isn't converting",
+  "I need a clear strategy",
+  "Other"
 ];
-
-const SUPPORT_LEVELS = [
-  'Strategy & guidance',
-  'Content creation',
-  'Full social media management',
-  'I’m exploring my options'
-];
-
-const TOTAL_STEPS = 5;
 
 export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
   isOpen,
   onClose,
   onSuccess
 }) => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<GrowthAuditData>({
+  const [formData, setFormData] = useState<GrowthPlanFormData>({
     name: '',
     instagramUsername: '',
     category: '',
+    goal: '',
     challenge: '',
-    supportLevel: '',
-    businessDescription: '',
+    countryCode: '+91',
+    phoneNumber: '',
     hp_website: ''
   });
 
-  const [stepError, setStepError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [direction, setDirection] = useState<number>(1); // 1 = forward, -1 = back
 
-  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const hasStartedRef = useRef<boolean>(false);
 
-  // Auto-focus input when step changes
-  useEffect(() => {
-    if (isOpen && !isSubmitted) {
-      const timer = setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [currentStep, isOpen, isSubmitted]);
-
-  // Reset state when opening
+  // Track form_open event when modal opens
   useEffect(() => {
     if (isOpen) {
-      // Don't reset if already submitted in the same session
-      if (!isSubmitted) {
-        setStepError(null);
-      }
-    }
-  }, [isOpen, isSubmitted]);
+      hasStartedRef.current = false;
+      trackFormOpen('user_click');
 
-  // Lock body scroll when open
-  useEffect(() => {
-    if (isOpen) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
@@ -101,6 +131,26 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
       };
     }
   }, [isOpen]);
+
+  // Focus name input on open
+  useEffect(() => {
+    if (isOpen && !isSubmitted) {
+      const timer = setTimeout(() => {
+        if (nameInputRef.current) {
+          nameInputRef.current.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isSubmitted]);
+
+  // Handle tracking form_start on first interaction
+  const handleFirstInteraction = (fieldName: string) => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackFormStart(fieldName);
+    }
+  };
 
   // Escape key handler
   useEffect(() => {
@@ -115,112 +165,71 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
 
   const handleClose = () => {
     onClose();
-    // After animation, if submitted, reset for next time
     if (isSubmitted) {
       setTimeout(() => {
         setIsSubmitted(false);
-        setCurrentStep(1);
         setFormData({
           name: '',
           instagramUsername: '',
           category: '',
+          goal: '',
           challenge: '',
-          supportLevel: '',
-          businessDescription: '',
+          countryCode: '+91',
+          phoneNumber: '',
           hp_website: ''
         });
-      }, 300);
+        setErrors({});
+      }, 250);
     }
   };
 
-  const validateCurrentStep = (): boolean => {
-    setStepError(null);
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
 
-    if (currentStep === 1) {
-      const name = formData.name.trim();
-      if (!name) {
-        setStepError('Please enter your name.');
-        return false;
-      }
-      if (name.length < 2) {
-        setStepError('Please enter your full name.');
-        return false;
-      }
-      return true;
+    const cleanName = formData.name.trim();
+    if (!cleanName) {
+      newErrors.name = 'Please enter your name.';
+    } else if (cleanName.length < 2) {
+      newErrors.name = 'Name must be at least 2 characters.';
     }
 
-    if (currentStep === 2) {
-      const handle = formData.instagramUsername.trim().replace(/^@/, '');
-      if (!handle) {
-        setStepError('Please enter your Instagram username.');
-        return false;
-      }
-      if (handle.length < 1 || handle.length > 30) {
-        setStepError('Please enter a valid Instagram username.');
-        return false;
-      }
-      return true;
+    const cleanHandle = formData.instagramUsername.trim().replace(/^@/, '');
+    if (!cleanHandle) {
+      newErrors.instagramUsername = 'Please enter your Instagram username.';
+    } else if (cleanHandle.length < 1 || cleanHandle.length > 30) {
+      newErrors.instagramUsername = 'Please enter a valid Instagram username.';
     }
 
-    if (currentStep === 3) {
-      if (!formData.category) {
-        setStepError('Please select what best describes you.');
-        return false;
-      }
-      return true;
+    if (!formData.category) {
+      newErrors.category = 'Please select what best describes you.';
     }
 
-    if (currentStep === 4) {
-      if (!formData.challenge) {
-        setStepError('Please choose your biggest growth challenge.');
-        return false;
-      }
-      return true;
+    if (!formData.goal) {
+      newErrors.goal = "Please select your main goal.";
     }
 
-    if (currentStep === 5) {
-      if (!formData.supportLevel) {
-        setStepError('Please choose the level of support you are looking for.');
-        return false;
-      }
-      return true;
+    if (!formData.challenge) {
+      newErrors.challenge = "Please select what's holding your account back.";
     }
 
-    return true;
+    const cleanPhone = formData.phoneNumber.replace(/[\s\-\(\)]/g, '');
+    if (!cleanPhone) {
+      newErrors.phoneNumber = 'Please enter your phone number.';
+    } else if (cleanPhone.length < 6 || cleanPhone.length > 15 || !/^\d+$/.test(cleanPhone)) {
+      newErrors.phoneNumber = 'Please enter a valid phone number.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = async () => {
-    if (!validateCurrentStep()) return;
-
-    if (currentStep < TOTAL_STEPS) {
-      setDirection(1);
-      setCurrentStep(prev => prev + 1);
-      setStepError(null);
-    } else {
-      // Final submit
-      await submitForm();
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setDirection(-1);
-      setCurrentStep(prev => prev - 1);
-      setStepError(null);
-    }
-  };
-
-  const handleKeyDownInput = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleNext();
-    }
-  };
-
-  const submitForm = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (isSubmitting) return;
 
-    // Honeypot check
+    if (!validateForm()) return;
+
+    // Honeypot spam protection
     if (formData.hp_website) {
       setIsSubmitted(true);
       if (onSuccess) onSuccess();
@@ -228,10 +237,12 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
     }
 
     setIsSubmitting(true);
-    setStepError(null);
+    setErrors({});
 
     const cleanHandle = formData.instagramUsername.trim().replace(/^@/, '');
     const cleanName = formData.name.trim();
+    const fullPhone = `${formData.countryCode} ${formData.phoneNumber.trim()}`;
+    const utm = getStoredUtmParams();
 
     try {
       const response = await fetch(SPLITFORMS_ENDPOINT, {
@@ -245,12 +256,20 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
           name: cleanName,
           instagramUsername: `@${cleanHandle}`,
           roleCategory: formData.category,
+          growthGoal: formData.goal,
           growthChallenge: formData.challenge,
-          supportLevel: formData.supportLevel,
-          businessDescription: formData.businessDescription.trim() || 'None provided',
+          phoneNumber: fullPhone,
+          utm_source: utm.utm_source || 'direct',
+          utm_medium: utm.utm_medium || 'none',
+          utm_campaign: utm.utm_campaign || '',
+          utm_term: utm.utm_term || '',
+          utm_content: utm.utm_content || '',
+          traffic_source: utm.traffic_source || 'direct',
+          landing_page: utm.landing_page || window.location.pathname,
+          referrer: utm.referrer || document.referrer || '',
           destination_email: DESTINATION_EMAIL,
           from_name: cleanName,
-          _subject: `New Growth Audit Request: ${cleanName} (@${cleanHandle})`
+          _subject: `Growth Plan Request: ${cleanName} (@${cleanHandle}) ${utm.utm_source !== 'direct' ? `[${utm.utm_source}]` : ''}`
         })
       });
 
@@ -260,469 +279,399 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
         throw new Error(responseData?.message || responseData?.error || 'Failed to submit request. Please try again.');
       }
 
+      // Mark submitted state
       setIsSubmitted(true);
+
+      // Track primary conversion event in GA4 / GTM
+      trackFormSubmit({
+        category: formData.category,
+        goal: formData.goal,
+        challenge: formData.challenge,
+        instagramHandle: cleanHandle,
+        name: cleanName,
+        phone: fullPhone
+      });
+
       if (onSuccess) {
         onSuccess();
       }
-      try {
-        localStorage.setItem('lead_capture_submitted', 'true');
-      } catch {
-        // Fallback
-      }
     } catch (err: any) {
-      setStepError(err?.message || 'Something went wrong. Please check your connection and try again.');
+      console.error('Submission error:', err);
+      setErrors({
+        general: err?.message || 'Something went wrong submitting your form. Please try again.'
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const progressPercentage = (currentStep / TOTAL_STEPS) * 100;
-
-  const slideVariants = {
-    enter: (d: number) => ({
-      x: d > 0 ? 24 : -24,
-      opacity: 0
-    }),
-    center: {
-      x: 0,
-      opacity: 1
-    },
-    exit: (d: number) => ({
-      x: d > 0 ? -24 : 24,
-      opacity: 0
-    })
-  };
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 bg-[#070709] text-white flex flex-col justify-between overflow-hidden selection:bg-blue-600/30 selection:text-white">
-          {/* Subtle Ambient Background Gradient */}
-          <div className="fixed inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[500px] h-[400px] bg-blue-600/10 rounded-full blur-[140px]" />
-            <div className="absolute -bottom-40 right-1/4 w-[400px] h-[350px] bg-indigo-600/8 rounded-full blur-[140px]" />
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="growth-plan-title"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 12, scale: 0.98 }}
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-h-[90vh] max-w-[430px] bg-[#09090b] text-white rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col overflow-hidden"
+        >
+          {/* Header */}
+          <div className="flex items-start justify-between px-4 sm:px-5 pt-4 pb-2 shrink-0">
+            <div>
+              <h2 id="growth-plan-title" className="text-lg sm:text-xl font-black tracking-tight text-white leading-tight">
+                {isSubmitted ? 'REQUEST RECEIVED' : 'Build Your Growth Plan'}
+              </h2>
+              {!isSubmitted && (
+                <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
+                  Tell us a few quick details about your Instagram and goals.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleClose}
+              className="w-7 h-7 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 flex items-center justify-center transition-colors cursor-pointer touch-manipulation active:scale-95 shrink-0 ml-2"
+              aria-label="Close dialog"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          {/* Top Header: Step Tracker & Thin Progress Bar */}
-          <header className="relative z-20 w-full max-w-xl mx-auto px-5 sm:px-8 pt-4 sm:pt-6 pb-2 shrink-0">
-            <div className="flex items-center justify-between gap-4 mb-3">
-              {/* Step indicator */}
-              {!isSubmitted ? (
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] sm:text-xs font-bold tracking-wider text-zinc-400 uppercase">
-                    STEP <span className="text-white">0{currentStep}</span> OF 0{TOTAL_STEPS}
-                  </span>
+          {/* Form / Success Body */}
+          <div 
+            className="flex-1 overflow-y-auto px-4 sm:px-5 py-2 space-y-3 overscroll-contain"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {isSubmitted ? (
+              /* Success Confirmation */
+              <div className="py-8 sm:py-10 text-center space-y-4">
+                <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <CheckCircle2 className="w-8 h-8" />
                 </div>
-              ) : (
-                <div className="flex items-center gap-1.5 text-blue-400 text-xs sm:text-sm font-semibold tracking-wide uppercase">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Audit Diagnostics</span>
-                </div>
-              )}
 
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={handleClose}
-                aria-label="Close growth audit"
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/5 hover:bg-white/10 active:bg-white/20 border border-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer touch-manipulation"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Thin 2px Progress Bar */}
-            {!isSubmitted && (
-              <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-400"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                />
-              </div>
-            )}
-          </header>
-
-          {/* Main Question / Form Container - Consistent top-aligned offset */}
-          <main className="relative z-10 w-full max-w-xl mx-auto px-5 sm:px-8 pt-4 pb-6 flex-1 overflow-y-auto flex flex-col justify-start">
-            {/* Honeypot hidden input */}
-            <div style={{ display: 'none' }} aria-hidden="true">
-              <input
-                type="text"
-                name="hp_website"
-                tabIndex={-1}
-                value={formData.hp_website}
-                onChange={e => setFormData(prev => ({ ...prev, hp_website: e.target.value }))}
-              />
-            </div>
-
-            <AnimatePresence mode="wait" custom={direction}>
-              {/* SUCCESS STATE */}
-              {isSubmitted ? (
-                <motion.div
-                  key="success-state"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-center py-8 sm:py-12 max-w-md mx-auto my-auto"
-                >
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-                    <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
-                  </div>
-
-                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3 leading-tight">
-                    Your Growth Audit Request is in.
-                  </h2>
-
-                  <p className="text-zinc-400 text-sm sm:text-base font-normal leading-relaxed mb-8">
-                    We’ll review your Instagram and identify your biggest growth opportunity. If we’re a good fit, we’ll reach out with the next steps.
+                <div className="space-y-1.5">
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight uppercase text-white">
+                    YOUR GROWTH PLAN REQUEST IS IN.
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed max-w-xs mx-auto">
+                    We've received your details and will get back to you shortly.
                   </p>
+                </div>
 
+                <div className="pt-2">
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg transition-all active:scale-95 cursor-pointer touch-manipulation min-h-[48px]"
+                    className="w-full sm:w-auto px-7 py-2.5 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer touch-manipulation"
                   >
-                    <span>Done</span>
-                    <ArrowRight className="w-4 h-4" />
+                    Close
                   </button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={`step-${currentStep}`}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full"
-                >
-                  {/* STEP 01: Name */}
-                  {currentStep === 1 && (
-                    <div>
-                      {/* Consistent Question Block */}
-                      <div className="mb-4 sm:mb-5">
-                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
-                          Step 01
-                        </span>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
-                          What’s your name?
-                        </h1>
-                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
-                          Let’s start with who we’re speaking with.
-                        </p>
-                      </div>
+                </div>
+              </div>
+            ) : (
+              /* Compact Single-Page Form */
+              <form onSubmit={handleSubmit} noValidate className="space-y-2.5 pb-1">
+                
+                {/* Honeypot */}
+                <input
+                  type="text"
+                  name="hp_website"
+                  value={formData.hp_website}
+                  onChange={e => setFormData(prev => ({ ...prev, hp_website: e.target.value }))}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden pointer-events-none opacity-0 h-0 w-0 absolute"
+                  aria-hidden="true"
+                />
 
-                      {/* Input directly below */}
-                      <div>
-                        <input
-                          ref={inputRef as React.RefObject<HTMLInputElement>}
-                          type="text"
-                          autoComplete="name"
-                          value={formData.name}
-                          onChange={e => {
-                            setFormData(prev => ({ ...prev, name: e.target.value }));
-                            if (stepError) setStepError(null);
-                          }}
-                          onKeyDown={handleKeyDownInput}
-                          placeholder="Your name"
-                          className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-base sm:text-lg font-medium text-white placeholder:text-zinc-600 focus:outline-none transition-all shadow-inner"
-                        />
-                      </div>
-                    </div>
+                {/* 1. Full Name */}
+                <div className="space-y-1">
+                  <label htmlFor="field-name" className="text-[11px] font-semibold text-zinc-300 block">
+                    Full Name <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    ref={nameInputRef}
+                    id="field-name"
+                    type="text"
+                    name="name"
+                    autoComplete="name"
+                    value={formData.name}
+                    onFocus={() => handleFirstInteraction('name')}
+                    onChange={e => {
+                      handleFirstInteraction('name');
+                      setFormData(prev => ({ ...prev, name: e.target.value }));
+                      if (errors.name) setErrors(prev => ({ ...prev, name: undefined }));
+                    }}
+                    placeholder="Your name"
+                    className={`w-full bg-zinc-900/90 border ${
+                      errors.name ? 'border-red-500' : 'border-zinc-800 focus:border-zinc-400'
+                    } rounded-lg px-3 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none transition-colors touch-manipulation`}
+                  />
+                  {errors.name && (
+                    <p className="text-[11px] text-red-400 flex items-center gap-1 pt-0.5" role="alert">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.name}</span>
+                    </p>
                   )}
+                </div>
 
-                  {/* STEP 02: Instagram Username */}
-                  {currentStep === 2 && (
-                    <div>
-                      {/* Consistent Question Block */}
-                      <div className="mb-4 sm:mb-5">
-                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
-                          Step 02
-                        </span>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
-                          What’s your Instagram username?
-                        </h1>
-                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
-                          We’ll audit your profile, content pillars, and reach bottlenecks.
-                        </p>
-                      </div>
-
-                      {/* Input directly below */}
-                      <div>
-                        <div className="relative flex items-center">
-                          <span className="absolute left-4 sm:left-5 text-base sm:text-lg font-semibold text-zinc-500 select-none">
-                            @
-                          </span>
-                          <input
-                            ref={inputRef as React.RefObject<HTMLInputElement>}
-                            type="text"
-                            autoComplete="username"
-                            value={formData.instagramUsername.replace(/^@/, '')}
-                            onChange={e => {
-                              const val = e.target.value.replace(/^@/, '').trim();
-                              setFormData(prev => ({ ...prev, instagramUsername: val }));
-                              if (stepError) setStepError(null);
-                            }}
-                            onKeyDown={handleKeyDownInput}
-                            placeholder="yourusername"
-                            className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-2xl pl-9 sm:pl-11 pr-4 sm:pr-5 py-3.5 sm:py-4 text-base sm:text-lg font-medium text-white placeholder:text-zinc-600 focus:outline-none transition-all shadow-inner"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                {/* 2. Instagram Username */}
+                <div className="space-y-1">
+                  <label htmlFor="field-instagram" className="text-[11px] font-semibold text-zinc-300 block">
+                    Instagram Username <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="field-instagram"
+                      type="text"
+                      name="instagramUsername"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck="false"
+                      value={formData.instagramUsername}
+                      onFocus={() => handleFirstInteraction('instagramUsername')}
+                      onChange={e => {
+                        handleFirstInteraction('instagramUsername');
+                        let val = e.target.value;
+                        if (val && !val.startsWith('@')) {
+                          val = `@${val}`;
+                        }
+                        setFormData(prev => ({ ...prev, instagramUsername: val }));
+                        if (errors.instagramUsername) setErrors(prev => ({ ...prev, instagramUsername: undefined }));
+                      }}
+                      placeholder="@username"
+                      className={`w-full bg-zinc-900/90 border ${
+                        errors.instagramUsername ? 'border-red-500' : 'border-zinc-800 focus:border-zinc-400'
+                      } rounded-lg px-3 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none transition-colors touch-manipulation font-medium`}
+                    />
+                  </div>
+                  {errors.instagramUsername && (
+                    <p className="text-[11px] text-red-400 flex items-center gap-1 pt-0.5" role="alert">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.instagramUsername}</span>
+                    </p>
                   )}
+                </div>
 
-                  {/* STEP 03: Category / Role */}
-                  {currentStep === 3 && (
-                    <div>
-                      {/* Consistent Question Block */}
-                      <div className="mb-3.5 sm:mb-4">
-                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
-                          Step 03
-                        </span>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
-                          What best describes you?
-                        </h1>
-                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
-                          Select the category that best matches your presence.
-                        </p>
-                      </div>
-
-                      {/* Compact full-width / 2-col option cards */}
-                      <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
-                        {CATEGORIES.map(cat => {
-                          const isSelected = formData.category === cat;
-                          return (
-                            <button
-                              key={cat}
-                              type="button"
-                              onClick={() => {
-                                setFormData(prev => ({ ...prev, category: cat }));
-                                if (stepError) setStepError(null);
-                              }}
-                              className={`text-left px-3.5 py-3 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[46px] sm:min-h-[50px] ${
-                                isSelected
-                                  ? 'bg-blue-600/15 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/40'
-                                  : 'bg-white/[0.03] border-white/10 hover:border-white/20 text-zinc-300 hover:text-white hover:bg-white/[0.06]'
-                              }`}
-                            >
-                              <span className="text-xs sm:text-sm font-semibold tracking-tight leading-snug">
-                                {cat}
-                              </span>
-                              <div
-                                className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 ml-1.5 rounded-full border flex items-center justify-center transition-all ${
-                                  isSelected
-                                    ? 'border-blue-500 bg-blue-600 text-white'
-                                    : 'border-white/20 bg-white/5'
-                                }`}
-                              >
-                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* STEP 04: Biggest Growth Challenge */}
-                  {currentStep === 4 && (
-                    <div>
-                      {/* Consistent Question Block */}
-                      <div className="mb-3.5 sm:mb-4">
-                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
-                          Step 04
-                        </span>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
-                          What’s your biggest growth challenge?
-                        </h1>
-                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
-                          Choose the challenge that best describes where you’re stuck.
-                        </p>
-                      </div>
-
-                      {/* Compact full-width cards with clear selected states */}
-                      <div className="space-y-2 sm:space-y-2.5">
-                        {CHALLENGES.map(item => {
-                          const isSelected = formData.challenge === item;
-                          return (
-                            <button
-                              key={item}
-                              type="button"
-                              onClick={() => {
-                                setFormData(prev => ({ ...prev, challenge: item }));
-                                if (stepError) setStepError(null);
-                              }}
-                              className={`w-full text-left px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[44px] sm:min-h-[48px] ${
-                                isSelected
-                                  ? 'bg-blue-600/15 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/40'
-                                  : 'bg-white/[0.03] border-white/10 hover:border-white/20 text-zinc-300 hover:text-white hover:bg-white/[0.06]'
-                              }`}
-                            >
-                              <span className="text-xs sm:text-sm font-medium tracking-tight pr-2 leading-snug">
-                                {item}
-                              </span>
-                              <div
-                                className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 rounded-full border flex items-center justify-center transition-all ${
-                                  isSelected
-                                    ? 'border-blue-500 bg-blue-600 text-white'
-                                    : 'border-white/20 bg-white/5'
-                                }`}
-                              >
-                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* STEP 05: Support Level & Optional Business Description */}
-                  {currentStep === 5 && (
-                    <div>
-                      {/* Consistent Question Block */}
-                      <div className="mb-3.5 sm:mb-4">
-                        <span className="text-[11px] sm:text-xs font-bold tracking-wider text-blue-400 uppercase block mb-1">
-                          Step 05
-                        </span>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-1.5">
-                          What level of support are you looking for?
-                        </h1>
-                        <p className="text-zinc-400 text-xs sm:text-sm font-normal">
-                          This helps us personalize our diagnostic strategy for your scale.
-                        </p>
-                      </div>
-
-                      {/* Options */}
-                      <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-3 sm:mb-4">
-                        {SUPPORT_LEVELS.map(item => {
-                          const isSelected = formData.supportLevel === item;
-                          return (
-                            <button
-                              key={item}
-                              type="button"
-                              onClick={() => {
-                                setFormData(prev => ({ ...prev, supportLevel: item }));
-                                if (stepError) setStepError(null);
-                              }}
-                              className={`text-left px-3 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer touch-manipulation min-h-[46px] sm:min-h-[50px] ${
-                                isSelected
-                                  ? 'bg-blue-600/15 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/40'
-                                  : 'bg-white/[0.03] border-white/10 hover:border-white/20 text-zinc-300 hover:text-white hover:bg-white/[0.06]'
-                              }`}
-                            >
-                              <span className="text-[11px] sm:text-sm font-semibold tracking-tight leading-snug">
-                                {item}
-                              </span>
-                              <div
-                                className={`w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 ml-1 rounded-full border flex items-center justify-center transition-all ${
-                                  isSelected
-                                    ? 'border-blue-500 bg-blue-600 text-white'
-                                    : 'border-white/20 bg-white/5'
-                                }`}
-                              >
-                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Optional textarea */}
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <label
-                            htmlFor="businessDescription"
-                            className="text-[11px] sm:text-xs font-medium text-zinc-400"
-                          >
-                            Tell us about your business
-                          </label>
-                          <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
-                            Optional
-                          </span>
-                        </div>
-                        <textarea
-                          id="businessDescription"
-                          rows={2}
-                          value={formData.businessDescription}
-                          onChange={e =>
-                            setFormData(prev => ({ ...prev, businessDescription: e.target.value }))
-                          }
-                          placeholder="Anything we should know about your business, audience, or current situation…"
-                          className="w-full bg-white/[0.04] border border-white/10 hover:border-white/20 focus:border-blue-500/80 rounded-xl p-2.5 sm:p-3 text-xs sm:text-sm font-normal text-white placeholder:text-zinc-600 focus:outline-none transition-all resize-none shadow-inner leading-relaxed min-h-[48px] sm:min-h-[56px] max-h-[64px]"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Inline Error Notice */}
-                  {stepError && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-3 text-xs sm:text-sm font-medium text-red-400 flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3.5 py-2 rounded-xl"
-                      role="alert"
+                {/* 3. What best describes you? */}
+                <div className="space-y-1">
+                  <label htmlFor="field-category" className="text-[11px] font-semibold text-zinc-300 block">
+                    What best describes you? <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="field-category"
+                      value={formData.category}
+                      onFocus={() => handleFirstInteraction('category')}
+                      onChange={e => {
+                        handleFirstInteraction('category');
+                        setFormData(prev => ({ ...prev, category: e.target.value }));
+                        if (errors.category) setErrors(prev => ({ ...prev, category: undefined }));
+                      }}
+                      className={`w-full appearance-none bg-zinc-900/90 border ${
+                        errors.category ? 'border-red-500' : 'border-zinc-800 focus:border-zinc-400'
+                      } rounded-lg px-3 py-2 pr-8 text-xs sm:text-sm ${
+                        formData.category ? 'text-white' : 'text-zinc-500'
+                      } focus:outline-none transition-colors cursor-pointer touch-manipulation`}
                     >
-                      <span>{stepError}</span>
-                    </motion.div>
+                      <option value="" disabled className="bg-zinc-900 text-zinc-500">
+                        Select an option
+                      </option>
+                      {CATEGORIES.map(cat => (
+                        <option key={cat} value={cat} className="bg-zinc-900 text-white">
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                  {errors.category && (
+                    <p className="text-[11px] text-red-400 flex items-center gap-1 pt-0.5" role="alert">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.category}</span>
+                    </p>
                   )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </main>
+                </div>
 
-          {/* Fixed Bottom Action Bar: 56px height, Back on left, Next on right, above iPhone safe area */}
-          {!isSubmitted && (
-            <footer className="relative z-30 w-full max-w-xl mx-auto px-5 sm:px-8 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0 border-t border-white/[0.08] bg-[#070709]/95 backdrop-blur-xl">
-              <div className="flex items-center gap-3">
-                {/* Back Button on Left */}
-                {currentStep > 1 && (
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    disabled={isSubmitting}
-                    aria-label="Previous step"
-                    className="h-[56px] min-h-[56px] px-5 sm:px-6 rounded-2xl bg-white/[0.05] hover:bg-white/10 active:bg-white/15 border border-white/10 text-zinc-300 hover:text-white font-semibold text-xs sm:text-sm inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation disabled:opacity-40 shrink-0"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Back</span>
-                  </button>
+                {/* 4. What's your main goal? */}
+                <div className="space-y-1">
+                  <label htmlFor="field-goal" className="text-[11px] font-semibold text-zinc-300 block">
+                    What's your main goal? <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="field-goal"
+                      value={formData.goal}
+                      onFocus={() => handleFirstInteraction('goal')}
+                      onChange={e => {
+                        handleFirstInteraction('goal');
+                        setFormData(prev => ({ ...prev, goal: e.target.value }));
+                        if (errors.goal) setErrors(prev => ({ ...prev, goal: undefined }));
+                      }}
+                      className={`w-full appearance-none bg-zinc-900/90 border ${
+                        errors.goal ? 'border-red-500' : 'border-zinc-800 focus:border-zinc-400'
+                      } rounded-lg px-3 py-2 pr-8 text-xs sm:text-sm ${
+                        formData.goal ? 'text-white' : 'text-zinc-500'
+                      } focus:outline-none transition-colors cursor-pointer touch-manipulation`}
+                    >
+                      <option value="" disabled className="bg-zinc-900 text-zinc-500">
+                        Select your main goal
+                      </option>
+                      {GOALS.map(g => (
+                        <option key={g} value={g} className="bg-zinc-900 text-white">
+                          {g}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                  {errors.goal && (
+                    <p className="text-[11px] text-red-400 flex items-center gap-1 pt-0.5" role="alert">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.goal}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* 5. What's holding your Instagram back? */}
+                <div className="space-y-1">
+                  <label htmlFor="field-challenge" className="text-[11px] font-semibold text-zinc-300 block">
+                    What's holding your Instagram back? <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="field-challenge"
+                      value={formData.challenge}
+                      onFocus={() => handleFirstInteraction('challenge')}
+                      onChange={e => {
+                        handleFirstInteraction('challenge');
+                        setFormData(prev => ({ ...prev, challenge: e.target.value }));
+                        if (errors.challenge) setErrors(prev => ({ ...prev, challenge: undefined }));
+                      }}
+                      className={`w-full appearance-none bg-zinc-900/90 border ${
+                        errors.challenge ? 'border-red-500' : 'border-zinc-800 focus:border-zinc-400'
+                      } rounded-lg px-3 py-2 pr-8 text-xs sm:text-sm ${
+                        formData.challenge ? 'text-white' : 'text-zinc-500'
+                      } focus:outline-none transition-colors cursor-pointer touch-manipulation`}
+                    >
+                      <option value="" disabled className="bg-zinc-900 text-zinc-500">
+                        Select what's holding you back
+                      </option>
+                      {CHALLENGES.map(ch => (
+                        <option key={ch} value={ch} className="bg-zinc-900 text-white">
+                          {ch}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                  {errors.challenge && (
+                    <p className="text-[11px] text-red-400 flex items-center gap-1 pt-0.5" role="alert">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.challenge}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* 6. Phone Number with Country Code */}
+                <div className="space-y-1">
+                  <label htmlFor="field-phone" className="text-[11px] font-semibold text-zinc-300 block">
+                    Phone Number <span className="text-red-400">*</span>
+                  </label>
+                  <div className="flex gap-1.5">
+                    {/* Country Code Select */}
+                    <div className="relative w-[100px] sm:w-[110px] shrink-0">
+                      <select
+                        aria-label="Country Code"
+                        value={formData.countryCode}
+                        onFocus={() => handleFirstInteraction('countryCode')}
+                        onChange={e => {
+                          handleFirstInteraction('countryCode');
+                          setFormData(prev => ({ ...prev, countryCode: e.target.value }));
+                        }}
+                        className="w-full appearance-none bg-zinc-900/90 border border-zinc-800 focus:border-zinc-400 rounded-lg px-2 py-2 pr-6 text-xs text-white focus:outline-none transition-colors cursor-pointer touch-manipulation"
+                      >
+                        {COUNTRY_CODES.map(item => (
+                          <option key={`${item.code}-${item.country}`} value={item.code} className="bg-zinc-900 text-white">
+                            {item.flag} {item.code}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="w-3 h-3 text-zinc-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+
+                    {/* Phone Input */}
+                    <input
+                      id="field-phone"
+                      type="tel"
+                      name="phoneNumber"
+                      autoComplete="tel-national"
+                      value={formData.phoneNumber}
+                      onFocus={() => handleFirstInteraction('phoneNumber')}
+                      onChange={e => {
+                        handleFirstInteraction('phoneNumber');
+                        setFormData(prev => ({ ...prev, phoneNumber: e.target.value }));
+                        if (errors.phoneNumber) setErrors(prev => ({ ...prev, phoneNumber: undefined }));
+                      }}
+                      placeholder="Enter your phone number"
+                      className={`flex-1 min-w-0 bg-zinc-900/90 border ${
+                        errors.phoneNumber ? 'border-red-500' : 'border-zinc-800 focus:border-zinc-400'
+                      } rounded-lg px-3 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-none transition-colors touch-manipulation`}
+                    />
+                  </div>
+                  {errors.phoneNumber && (
+                    <p className="text-[11px] text-red-400 flex items-center gap-1 pt-0.5" role="alert">
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <span>{errors.phoneNumber}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* General Error Banner */}
+                {errors.general && (
+                  <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-medium flex items-center gap-2">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{errors.general}</span>
+                  </div>
                 )}
 
-                {/* Next / Submit Button on Right */}
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={isSubmitting}
-                  className={`h-[56px] min-h-[56px] flex-1 px-6 sm:px-8 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-sm sm:text-base inline-flex items-center justify-center gap-2 shadow-lg shadow-white/5 active:scale-[0.98] transition-all cursor-pointer touch-manipulation disabled:opacity-60`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Submitting...</span>
-                    </>
-                  ) : currentStep === TOTAL_STEPS ? (
-                    <>
-                      <span>Request My Growth Audit</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Next</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-            </footer>
-          )}
-        </div>
-      )}
+                {/* CTA Button & Note */}
+                <div className="pt-1">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full h-[42px] sm:h-[46px] rounded-lg bg-white hover:bg-zinc-200 active:bg-zinc-300 text-zinc-950 font-black text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5 shadow-lg shadow-white/5 active:scale-[0.98] transition-all cursor-pointer touch-manipulation disabled:opacity-60"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Sending Request...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>BUILD MY GROWTH PLAN</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                  <p className="text-[10px] text-zinc-400 text-center font-normal mt-1.5">
+                    We'll review your details and get back to you.
+                  </p>
+                </div>
+
+              </form>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 };

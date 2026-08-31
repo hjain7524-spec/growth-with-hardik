@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { GrowthAuditExperience } from './GrowthAuditExperience';
+import { trackGrowthAuditClick } from './analytics';
+
+const GrowthAuditExperience = lazy(() => 
+  import('./GrowthAuditExperience').then(module => ({ default: module.GrowthAuditExperience }))
+);
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const STORAGE_KEY_DISMISSED = 'growth_audit_modal_dismissed_time';
@@ -152,7 +156,7 @@ export const SmartLeadCaptureModal: React.FC<SmartLeadCaptureModalProps> = ({
 
   return (
     <>
-      {/* Clean Sticky "Request Growth Audit" CTAs */}
+      {/* Clean Sticky "Free Growth Audit" CTAs */}
       {!hasSubmitted && !isModalOpen && (
         <>
           {/* Desktop Sticky CTA */}
@@ -163,11 +167,14 @@ export const SmartLeadCaptureModal: React.FC<SmartLeadCaptureModalProps> = ({
             className="fixed bottom-6 right-6 z-40 hidden sm:block"
           >
             <button
-              onClick={openModal}
+              onClick={() => {
+                trackGrowthAuditClick('sticky_cta_desktop', 'Free Growth Audit');
+                openModal();
+              }}
               className="group inline-flex items-center gap-2.5 bg-zinc-950/95 hover:bg-black text-white px-5 py-3 rounded-full border border-zinc-800/80 hover:border-zinc-700 shadow-[0_8px_25px_rgba(0,0,0,0.18)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.28)] backdrop-blur-md transition-all duration-200 cursor-pointer select-none text-xs md:text-sm font-bold tracking-tight active:scale-95 touch-manipulation"
-              aria-label="Request Growth Audit"
+              aria-label="Free Growth Audit"
             >
-              <span>Request Growth Audit</span>
+              <span>Free Growth Audit</span>
               <ArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
             </button>
           </motion.div>
@@ -180,11 +187,14 @@ export const SmartLeadCaptureModal: React.FC<SmartLeadCaptureModalProps> = ({
             className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/90 px-4 py-2.5 pb-[max(0.65rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]"
           >
             <button
-              onClick={openModal}
+              onClick={() => {
+                trackGrowthAuditClick('sticky_cta_mobile', 'Free Growth Audit');
+                openModal();
+              }}
               className="w-full bg-zinc-950 active:bg-black text-white text-sm font-black py-3 px-5 rounded-xl flex items-center justify-center gap-2 shadow-sm touch-manipulation min-h-[46px] cursor-pointer"
-              aria-label="Request Growth Audit"
+              aria-label="Free Growth Audit"
             >
-              <span>Request Growth Audit</span>
+              <span>Free Growth Audit</span>
               <ArrowRight className="w-4 h-4 text-zinc-300" />
             </button>
           </motion.div>
@@ -192,13 +202,17 @@ export const SmartLeadCaptureModal: React.FC<SmartLeadCaptureModalProps> = ({
       )}
 
       {/* Full-Screen Step-by-Step Growth Audit Experience */}
-      <GrowthAuditExperience
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSuccess={() => {
-          setHasSubmitted(true);
-        }}
-      />
+      {isModalOpen && (
+        <Suspense fallback={null}>
+          <GrowthAuditExperience
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onSuccess={() => {
+              setHasSubmitted(true);
+            }}
+          />
+        </Suspense>
+      )}
     </>
   );
 };
