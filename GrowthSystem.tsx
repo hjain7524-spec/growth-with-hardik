@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowDown, ArrowRight, MessageSquare, Sparkles, CheckCircle } from 'lucide-react';
-import { trackGrowthAuditClick } from './analytics';
+import { ChevronDown, ArrowDown, Sparkles, CheckCircle } from 'lucide-react';
 
 interface Step {
   stepNumber: string;
@@ -46,17 +45,8 @@ interface GrowthSystemProps {
   onRequestAudit?: () => void;
 }
 
-export const GrowthSystem: React.FC<GrowthSystemProps> = ({ onRequestAudit }) => {
+export const GrowthSystem: React.FC<GrowthSystemProps> = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const handleRequestAudit = () => {
-    trackGrowthAuditClick('growth_system_process', 'Free Growth Audit');
-    if (onRequestAudit) {
-      onRequestAudit();
-    } else {
-      window.dispatchEvent(new CustomEvent('open_growth_audit_modal'));
-    }
-  };
 
   return (
     <section id="process" className="py-14 sm:py-20 md:py-28 bg-black text-white relative overflow-hidden px-5 sm:px-6 md:px-8 border-t border-zinc-900">
@@ -119,7 +109,7 @@ export const GrowthSystem: React.FC<GrowthSystemProps> = ({ onRequestAudit }) =>
                   {/* Vertical Timeline Container */}
                   <div className="relative max-w-2xl mx-auto flex flex-col items-center">
                     {/* Background Vertical Connecting Line */}
-                    <div className="absolute top-6 bottom-20 w-0.5 bg-gradient-to-b from-blue-600 via-indigo-500/50 to-blue-600/10 z-0" />
+                    <div className="absolute top-6 bottom-6 w-0.5 bg-gradient-to-b from-blue-600 via-indigo-500/50 to-blue-600/10 z-0" />
 
                     {/* Steps List */}
                     {STEPS.map((step, idx) => (
@@ -161,36 +151,6 @@ export const GrowthSystem: React.FC<GrowthSystemProps> = ({ onRequestAudit }) =>
                       </React.Fragment>
                     ))}
                   </div>
-
-                  {/* Bottom CTA Card */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.35 }}
-                    className="mt-8 sm:mt-12 p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-blue-500/30 text-center relative overflow-hidden shadow-2xl shadow-blue-900/20"
-                  >
-                    {/* Ambient Glow */}
-                    <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
-
-                    <div className="relative z-10">
-                      <h3 className="text-xl sm:text-3xl md:text-4xl font-black text-white tracking-tight mb-2 sm:mb-3">
-                        Ready to Grow Your Brand?
-                      </h3>
-                      <p className="text-gray-400 font-normal text-xs sm:text-sm md:text-base mb-6 max-w-lg mx-auto leading-[1.5]">
-                        Let's discuss your goals and build a growth strategy tailored to your business.
-                      </p>
-
-                      <motion.button
-                        onClick={handleRequestAudit}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="inline-flex items-center justify-center gap-2.5 sm:gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-600 text-white font-black text-[15px] sm:text-base md:text-[17px] px-7 sm:px-8 py-3.5 sm:py-4.5 rounded-full shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-pointer touch-manipulation min-h-[48px] sm:min-h-[52px]"
-                      >
-                        <span>Free Growth Audit</span>
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </motion.button>
-                    </div>
-                  </motion.div>
                 </div>
               </motion.div>
             )}
