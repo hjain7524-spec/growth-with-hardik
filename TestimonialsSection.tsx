@@ -1,333 +1,228 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Star, 
-  ChevronLeft, 
-  ChevronRight 
-} from 'lucide-react';
-import { TESTIMONIALS } from './constants';
-import { trackCaseStudyClick } from './analytics';
+import React, { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const AUTOPLAY_INTERVAL = 6000; // 6 seconds
+interface ReviewItem {
+  id: string;
+  quoteTitle: string;
+  content: string;
+  author: string;
+  role: string;
+  avatar: string;
+  rating: number;
+}
+
+const REVIEWS: ReviewItem[] = [
+  {
+    id: 'r1',
+    quoteTitle: '“Exceptional Support”',
+    content: 'Hardik helped me build a structured content strategy that supported my growth to over 200K followers within 12 months.',
+    author: 'Tanya Saharawat',
+    role: 'Yoga Creator & Influencer',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r2',
+    quoteTitle: '“Outstanding”',
+    content: 'Hardik helped us streamline our content and improve consistency across platforms.',
+    author: 'Himadari Foundation',
+    role: 'Non-Profit & Foundation',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r3',
+    quoteTitle: '“Value Addition”',
+    content: 'Our engagement metrics improved significantly within the first 60 days of working together.',
+    author: 'Aman Sharma',
+    role: 'Tech & Productivity Creator',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  }
+];
 
 export const TestimonialsSection: React.FC = () => {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'creator' | 'business'>('all');
-  const [isPaused, setIsPaused] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
 
-  const filteredTestimonials = TESTIMONIALS.filter(t => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'creator') return t.category === 'creator';
-    if (activeFilter === 'business') return t.category === 'brand' || t.category === 'agency';
-    return true;
-  });
-
-  const N = filteredTestimonials.length;
-
-  // Responsive container width measurement for pixel-perfect card positioning
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState<number>(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.clientWidth);
-      }
-    };
-
-    updateWidth();
-
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-      resizeObserver = new ResizeObserver(() => {
-        updateWidth();
-      });
-      resizeObserver.observe(containerRef.current);
-    }
-
-    window.addEventListener('resize', updateWidth);
-    return () => {
-      if (resizeObserver) resizeObserver.disconnect();
-      window.removeEventListener('resize', updateWidth);
-    };
-  }, []);
-
-  // Determine items to show based on measured width
-  const isMobile = containerWidth < 640;
-  const isTablet = containerWidth >= 640 && containerWidth < 1024;
-  const itemsToShow = isMobile ? 1 : isTablet ? 2 : 3;
-  const gap = isMobile ? 16 : 20;
-
-  // Card width calculation
-  const cardWidth = containerWidth > 0
-    ? itemsToShow === 1
-      ? containerWidth
-      : Math.floor((containerWidth - (itemsToShow - 1) * gap) / itemsToShow)
-    : 320;
-
-  // Duplicate items 3x for smooth infinite loop
-  const virtualList = N > 0 ? [...filteredTestimonials, ...filteredTestimonials, ...filteredTestimonials] : [];
-
-  // Start index at middle set (N)
-  const [currentIndex, setCurrentIndex] = useState(N);
-  const [isTransitioning, setIsTransitioning] = useState(true);
-
-  // Reset index when filter or list length changes
-  useEffect(() => {
-    if (N > 0) {
-      setCurrentIndex(N);
-      setIsTransitioning(false);
-    }
-  }, [N, activeFilter]);
+  const total = REVIEWS.length;
 
   const handleNext = useCallback(() => {
-    if (N === 0) return;
-    setIsTransitioning(true);
-    setCurrentIndex(prev => prev + 1);
-  }, [N]);
+    if (total <= 1) return;
+    setDirection(1);
+    setCurrentIndex((prev) => (prev + 1) % total);
+  }, [total]);
 
   const handlePrev = useCallback(() => {
-    if (N === 0) return;
-    setIsTransitioning(true);
-    setCurrentIndex(prev => prev - 1);
-  }, [N]);
+    if (total <= 1) return;
+    setDirection(-1);
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
+  }, [total]);
 
-  const handleDotClick = (index: number) => {
-    setIsTransitioning(true);
-    setCurrentIndex(N + index);
+  const handleSelectDot = (idx: number) => {
+    if (idx === currentIndex) return;
+    setDirection(idx > currentIndex ? 1 : -1);
+    setCurrentIndex(idx);
   };
 
-  const handleAnimationComplete = () => {
-    if (N === 0) return;
-    if (currentIndex >= 2 * N) {
-      setIsTransitioning(false);
-      setCurrentIndex(currentIndex - N);
-    } else if (currentIndex < N) {
-      setIsTransitioning(false);
-      setCurrentIndex(currentIndex + N);
-    }
+  const currentItem = REVIEWS[currentIndex] || REVIEWS[0];
+
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 30 : -30,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.25,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -30 : 30,
+      opacity: 0,
+      transition: {
+        duration: 0.18,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    })
   };
-
-  // Autoplay timer
-  useEffect(() => {
-    if (isPaused || N === 0) return;
-    const timer = setInterval(() => {
-      handleNext();
-    }, AUTOPLAY_INTERVAL);
-    return () => clearInterval(timer);
-  }, [isPaused, N, handleNext]);
-
-  const activeDotIndex = N > 0 ? ((currentIndex % N) + N) % N : 0;
-
-  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const swipeThreshold = 35;
-    const velocityThreshold = 200;
-    if (info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold) {
-      handleNext();
-    } else if (info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold) {
-      handlePrev();
-    }
-  };
-
-  // Target X transform position in pixels
-  const targetX = containerWidth > 0 ? -currentIndex * (cardWidth + gap) : 0;
 
   return (
-    <section id="feedback" className="py-12 sm:py-16 md:py-24 bg-white text-zinc-900 relative overflow-hidden px-4 sm:px-6 md:px-8 border-t border-zinc-100">
-      <div className="max-w-7xl mx-auto relative z-10 w-full">
+    <section 
+      id="feedback" 
+      className="relative w-full py-10 sm:py-14 md:py-16 bg-[#F7F7F5] text-[#080808] border-b border-[#D9D9D9] overflow-hidden"
+      aria-label="Testimonials"
+    >
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-6 md:px-8">
         {/* Section Header */}
-        <div className="text-center mb-5 sm:mb-8 md:mb-10 px-2">
-          <motion.h2
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="text-[24px] min-[360px]:text-[26px] min-[390px]:text-[28px] sm:text-4xl md:text-5xl lg:text-[50px] font-black tracking-tight text-zinc-900 mb-1 sm:mb-2 leading-tight"
-          >
-            What Our Clients Say
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-            className="text-zinc-500 text-[14px] sm:text-base md:text-lg font-normal max-w-[330px] sm:max-w-lg mx-auto leading-[1.4] sm:leading-[1.5]"
-          >
-            Real results from creators and brands we've helped.
-          </motion.p>
-        </div>
-
-        {/* Minimal Category Filter Tabs & Navigation Controls */}
-        <div className="max-w-[420px] sm:max-w-none mx-auto flex items-center justify-between gap-4 mb-3.5 sm:mb-5 px-0.5">
-          {/* Minimal Text Tabs: All | Creators | Businesses */}
-          <div className="inline-flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium text-zinc-400">
-            <button
-              onClick={() => {
-                setActiveFilter('all');
-                trackCaseStudyClick('filter_all', 'All Case Studies', 'all');
-              }}
-              className={`transition-colors cursor-pointer py-1 ${
-                activeFilter === 'all'
-                  ? 'text-zinc-900 font-bold'
-                  : 'text-zinc-400 hover:text-zinc-700'
-              }`}
-            >
-              All
-            </button>
-            <span className="text-zinc-300 select-none">•</span>
-            <button
-              onClick={() => {
-                setActiveFilter('creator');
-                trackCaseStudyClick('filter_creator', 'Creator Case Studies', 'creator');
-              }}
-              className={`transition-colors cursor-pointer py-1 ${
-                activeFilter === 'creator'
-                  ? 'text-zinc-900 font-bold'
-                  : 'text-zinc-400 hover:text-zinc-700'
-              }`}
-            >
-              Creators
-            </button>
-            <span className="text-zinc-300 select-none">•</span>
-            <button
-              onClick={() => {
-                setActiveFilter('business');
-                trackCaseStudyClick('filter_business', 'Business Case Studies', 'business');
-              }}
-              className={`transition-colors cursor-pointer py-1 ${
-                activeFilter === 'business'
-                  ? 'text-zinc-900 font-bold'
-                  : 'text-zinc-400 hover:text-zinc-700'
-              }`}
-            >
-              Businesses
-            </button>
+        <div className="text-center flex flex-col items-center">
+          {/* Eyebrow: exactly "Testimonials" */}
+          <div className="flex items-center gap-2 mb-2 sm:mb-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+            <span className="text-[12px] sm:text-[13px] font-semibold tracking-[0.08em] uppercase text-[#707070]">
+              TESTIMONIALS
+            </span>
           </div>
 
-          {/* Minimalist Navigation Arrows */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Main heading: "Happy words from our valuable clients!" */}
+          <div className="relative inline-flex flex-col items-center">
+            <h2 className="text-[28px] sm:text-[34px] md:text-[38px] lg:text-[42px] font-bold tracking-tight text-[#080808] leading-[1.12] text-center max-w-[650px]">
+              Happy words from our valuable clients!
+            </h2>
+
+            {/* Hand-drawn yellow underline directly below the heading */}
+            <svg 
+              className="w-[200px] sm:w-[260px] md:w-[300px] h-3.5 mt-1 sm:mt-1.5 text-amber-400" 
+              viewBox="0 0 260 12" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path 
+                d="M3 8.5C52 2.5 138 2 257 8.5" 
+                stroke="#FBBF24" 
+                strokeWidth="3.5" 
+                strokeLinecap="round" 
+              />
+            </svg>
+          </div>
+
+          {/* Simple circular left/right arrow controls below heading */}
+          <div className="flex items-center justify-center gap-3 mt-4 sm:mt-5 mb-6 sm:mb-7">
             <button
+              type="button"
               onClick={handlePrev}
               aria-label="Previous testimonial"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-600 hover:text-zinc-900 flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs active:scale-95 touch-manipulation"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-[#D9D9D9] bg-white hover:bg-zinc-50 active:scale-95 text-[#080808] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-xs touch-manipulation"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
+              type="button"
               onClick={handleNext}
               aria-label="Next testimonial"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-600 hover:text-zinc-900 flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs active:scale-95 touch-manipulation"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-[#D9D9D9] bg-white hover:bg-zinc-50 active:scale-95 text-[#080808] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-xs touch-manipulation"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Carousel Window Container (Bounded to max 420px on mobile, full width on desktop) */}
-        <motion.div 
-          ref={containerRef}
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-[420px] sm:max-w-none mx-auto relative overflow-hidden py-1"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* Sliding Track */}
-          <motion.div
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            dragTransition={{ bounceStiffness: 350, bounceDamping: 32 }}
-            onDragEnd={handleDragEnd}
-            animate={{ x: targetX }}
-            transition={
-              isTransitioning
-                ? { type: "spring", stiffness: 240, damping: 28, mass: 0.85 }
-                : { duration: 0 }
-            }
-            onAnimationComplete={handleAnimationComplete}
-            className="flex cursor-grab active:cursor-grabbing touch-pan-y will-change-transform"
-            style={{ width: 'max-content' }}
-          >
-            {virtualList.map((item, idx) => {
-              const textLength = item.content ? item.content.length : 0;
-              // Exceptionally short testimonials (< 90 chars) receive slightly more vertical inner padding and margin to balance card height
-              const isShort = textLength < 90;
+        {/* Compact, soft-rounded Testimonial Card */}
+        <div className="relative w-full max-w-[620px] mx-auto">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div
+              key={currentItem.id}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="w-full bg-white text-[#080808] rounded-[18px] sm:rounded-[22px] p-6 sm:p-7 md:p-8 border border-[#E5E5E5] shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between"
+            >
+              {/* Quote Title at the top */}
+              <h3 className="text-[20px] sm:text-[22px] md:text-[24px] font-bold tracking-tight text-[#080808] leading-snug">
+                {currentItem.quoteTitle}
+              </h3>
 
-              return (
-                <div
-                  key={`${item.id}-${idx}`}
-                  style={{
-                    width: `${cardWidth}px`,
-                    minWidth: `${cardWidth}px`,
-                    maxWidth: `${cardWidth}px`,
-                    marginRight: `${gap}px`
-                  }}
-                  className="shrink-0 h-auto transition-transform duration-300 ease-out"
-                >
-                  {/* Premium Black / Zinc-950 Card with dynamic padding balance */}
-                  <div 
-                    onClick={() => trackCaseStudyClick(item.id, item.author, item.category)}
-                    className={`bg-zinc-950 border border-zinc-800/90 rounded-[1.5rem] ${isShort ? 'p-7 sm:p-8 md:p-9' : 'p-6 sm:p-7 md:p-8'} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative h-full min-h-[220px] sm:min-h-[240px] select-none box-border cursor-pointer`}
-                  >
-                    <div>
-                      {/* Top Row: Stars + Metric Tag if available */}
-                      <div className={`flex items-center justify-between gap-2 ${isShort ? 'mb-5 sm:mb-6' : 'mb-4'}`}>
-                        <div className="flex text-amber-400" aria-label={`${item.rating || 5} out of 5 stars`}>
-                          {[...Array(item.rating || 5)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                          ))}
-                        </div>
-                        {item.metricTag && (
-                          <span className="text-[11px] font-semibold text-zinc-300 bg-zinc-800/90 border border-zinc-700/60 px-2 py-0.5 rounded-md">
-                            {item.metricTag}
-                          </span>
-                        )}
-                      </div>
+              {/* 5 Yellow Stars below quote title */}
+              <div className="flex items-center gap-1 mt-2.5 text-[#FBBF24]" aria-label="5 out of 5 stars">
+                {[...Array(currentItem.rating)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#FBBF24] text-[#FBBF24]" />
+                ))}
+              </div>
 
-                      {/* Review Quote with Natural Word Wrap */}
-                      <p className={`text-zinc-200 font-normal ${isShort ? 'text-sm sm:text-base leading-[1.65] mb-6' : 'text-sm sm:text-[15px] leading-[1.6] mb-5'} break-words whitespace-normal`}>
-                        "{item.content}"
-                      </p>
-                    </div>
+              {/* Review Text: readable medium size with comfortable line-height */}
+              <p className="text-[15px] sm:text-[16px] text-[#404040] font-normal leading-relaxed mt-4 mb-5">
+                "{currentItem.content}"
+              </p>
 
-                    {/* Client Info */}
-                    <div className={`${isShort ? 'pt-4 sm:pt-5' : 'pt-3.5'} border-t border-zinc-800/80 mt-auto`}>
-                      <h3 className="font-bold text-white text-sm sm:text-base tracking-tight truncate">
-                        {item.author}
-                      </h3>
-                      <p className="text-xs sm:text-[13px] text-zinc-400 font-medium mt-0.5 truncate">
-                        {item.role}
-                      </p>
-                    </div>
-                  </div>
+              {/* Thin Divider before client info */}
+              <div className="border-t border-[#E5E5E5] pt-4 flex items-center gap-3">
+                <img 
+                  src={currentItem.avatar} 
+                  alt={currentItem.author} 
+                  className="w-11 h-11 rounded-full object-cover border border-[#E5E5E5] shrink-0" 
+                  loading="lazy"
+                />
+                <div className="flex flex-col">
+                  <span className="text-[14.5px] sm:text-[15px] font-bold text-[#080808] tracking-tight leading-tight">
+                    {currentItem.author}
+                  </span>
+                  <span className="text-[12.5px] sm:text-[13px] text-[#707070] font-normal mt-0.5 leading-tight">
+                    {currentItem.role}
+                  </span>
                 </div>
-              );
-            })}
-          </motion.div>
-        </motion.div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        {/* Centered Pagination Dots Below Card */}
-        {N > 0 && (
-          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-5 sm:mt-6">
-            {filteredTestimonials.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleDotClick(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === activeDotIndex
-                    ? 'w-5 sm:w-6 bg-zinc-800'
-                    : 'w-1.5 bg-zinc-300 hover:bg-zinc-400'
+        {/* Carousel Dots */}
+        <div className="flex justify-center items-center gap-1 mt-4" aria-label="Testimonial pagination">
+          {REVIEWS.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleSelectDot(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+              className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer touch-manipulation group"
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all duration-200 block ${
+                  idx === currentIndex
+                    ? 'w-5 bg-[#080808]'
+                    : 'w-1.5 bg-[#D9D9D9] group-hover:bg-zinc-400'
                 }`}
               />
-            ))}
-          </div>
-        )}
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   );
 };
-

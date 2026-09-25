@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, CheckCircle2, ArrowRight, AlertCircle, ChevronDown } from 'lucide-react';
-import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY, DESTINATION_EMAIL } from './constants';
-import { trackFormOpen, trackFormStart, trackFormSubmit, getStoredUtmParams } from './analytics';
+import { SPLITFORMS_ENDPOINT, SPLITFORMS_ACCESS_KEY, DESTINATION_EMAIL, WHATSAPP_URL } from './constants';
+import { trackFormOpen, trackFormStart, trackFormSubmit, trackWhatsAppClick, getStoredUtmParams } from './analytics';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export interface GrowthPlanFormData {
   name: string;
@@ -366,11 +367,21 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                   </p>
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                  <a
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackWhatsAppClick('modal_success_action')}
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm transition-all active:scale-95 inline-flex items-center justify-center gap-1.5 touch-manipulation shadow-md"
+                  >
+                    <WhatsAppIcon className="w-4 h-4 fill-current text-white" />
+                    <span>Message on WhatsApp</span>
+                  </a>
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="w-full sm:w-auto px-7 py-2.5 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer touch-manipulation"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer touch-manipulation"
                   >
                     Close
                   </button>
@@ -665,6 +676,18 @@ export const GrowthAuditExperience: React.FC<GrowthAuditExperienceProps> = ({
                   <p className="text-[10px] text-zinc-400 text-center font-normal mt-1.5">
                     We'll review your details and get back to you.
                   </p>
+                  <div className="pt-2 text-center">
+                    <a
+                      href={WHATSAPP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackWhatsAppClick('modal_form_footer')}
+                      className="inline-flex items-center justify-center gap-1.5 text-[11px] text-zinc-400 hover:text-white transition-colors py-1.5 px-3 rounded-full hover:bg-zinc-900 touch-manipulation min-h-[44px]"
+                    >
+                      <WhatsAppIcon className="w-3.5 h-3.5 fill-current text-[#25D366]" />
+                      <span>Prefer WhatsApp? Chat directly</span>
+                    </a>
+                  </div>
                 </div>
 
               </form>

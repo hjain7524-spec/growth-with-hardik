@@ -1,4 +1,6 @@
 
+export type ViewType = 'home' | 'services';
+
 export interface Service {
   id: string;
   title: string;
@@ -29,6 +31,6 @@ export interface Testimonial {
   role: string;
   metricTag?: string;
   rating?: number;
-  category?: 'creator' | 'brand' | 'agency';
+  category?: 'creator' | 'brand' | 'agency' | 'business';
   verified?: boolean;
 }

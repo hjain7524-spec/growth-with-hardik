@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-black: #080808;
+  --color-white: #FFFFFF;
+  --color-offwhite: #F7F7F5;
+  --color-red-primary: #E50914;
+  --color-red-secondary: #FF2B35;
+  --color-border-gray: #D9D9D9;
+  --color-dark-border: #292929;
+  --color-text-secondary: #707070;
+  
+  --font-primary: 'Poppins', 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-primary);
+  background-color: var(--color-offwhite);
+  color: var(--color-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-offwhite);
+  color: var(--color-black);
+  font-family: var(--font-primary);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: #111111;
+  color: #FFFFFF;
+}
+
+/* Editorial subtle thin line dividers */
+.border-editorial {
+  border-color: #E8E8E3;
+}
+
+.border-editorial-dark {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Hide scrollbars cleanly when horizontal scrolling carousels are in use */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch manipulation */
+button,
+a,
+[role="button"],
+input,
+select {
+  touch-action: manipulation;
+}
+
+/* Continuous seamless brand marquee in Trusted By section */
+@keyframes brandMarquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-brand-marquee {
+  display: flex;
+  width: max-content;
+  animation: brandMarquee 35s linear infinite;
+  will-change: transform;
+}

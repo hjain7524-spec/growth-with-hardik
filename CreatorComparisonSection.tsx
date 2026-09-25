@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, X } from 'lucide-react';
+import { ArrowRight, Check, Minus } from 'lucide-react';
 import { trackGrowthAuditClick } from './analytics';
 
 interface CreatorComparisonSectionProps {
@@ -18,154 +18,130 @@ export const CreatorComparisonSection: React.FC<CreatorComparisonSectionProps> =
   };
 
   return (
-    <section className="py-14 sm:py-20 md:py-24 bg-white text-zinc-950 relative overflow-hidden px-4 sm:px-6 md:px-8 border-t border-gray-100 selection:bg-blue-600/20 selection:text-zinc-950">
-      <div className="max-w-4xl mx-auto relative z-10">
+    <section 
+      id="comparison" 
+      className="relative w-full py-11 md:py-16 bg-[#F7F7F5] text-[#080808] border-b border-[#D9D9D9]"
+      aria-label="Creator Approach Comparison"
+    >
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-6 md:px-8">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-xl min-[360px]:text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-zinc-950 mb-2 sm:mb-3 leading-tight whitespace-nowrap"
-          >
+        <div className="text-center mb-8 sm:mb-10">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+            <span className="text-[12px] sm:text-[13px] font-semibold tracking-[0.08em] uppercase text-[#707070]">
+              STRATEGIC PERSPECTIVE
+            </span>
+          </div>
+
+          <h2 className="text-[32px] sm:text-[38px] md:text-[44px] lg:text-[48px] font-bold tracking-tight text-[#080808] leading-[1.05]">
             Which Creator Are You?
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-            className="text-zinc-600 text-[14.5px] sm:text-base md:text-lg font-normal max-w-xl mx-auto leading-relaxed"
-          >
+          <p className="mt-2.5 text-[16px] sm:text-[17px] text-[#707070] font-normal leading-normal max-w-[550px] mx-auto">
             Your growth depends on how you approach your content.
-          </motion.p>
-        </div>
-
-        {/* Two Side-by-Side Comparison Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-10 sm:mb-14 items-stretch">
-          {/* Card 1: THE CONTENT GRINDER */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-            className="bg-white border border-zinc-200/90 rounded-2xl sm:rounded-3xl p-6 sm:p-7 md:p-8 flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.09)] ring-1 ring-black/[0.04] transition-shadow duration-300"
-          >
-            <div>
-              <div className="mb-4 sm:mb-5">
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-zinc-400 block mb-1">
-                  Approach A
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-800">
-                  THE CONTENT GRINDER
-                </h3>
-                <p className="text-zinc-500 text-sm sm:text-[15px] mt-1 font-medium">
-                  Posts whenever they can.
-                </p>
-              </div>
-
-              <ul className="space-y-3 sm:space-y-3.5 pt-4 border-t border-zinc-200">
-                <li className="flex items-start gap-2.5 text-zinc-700 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-zinc-200/70 border border-zinc-300 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600">
-                    <span className="text-xs font-bold leading-none">•</span>
-                  </div>
-                  <span>Posts without a clear plan</span>
-                </li>
-                <li className="flex items-start gap-2.5 text-zinc-700 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-zinc-200/70 border border-zinc-300 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600">
-                    <span className="text-xs font-bold leading-none">•</span>
-                  </div>
-                  <span>Chases trends</span>
-                </li>
-                <li className="flex items-start gap-2.5 text-zinc-700 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-zinc-200/70 border border-zinc-300 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600">
-                    <span className="text-xs font-bold leading-none">•</span>
-                  </div>
-                  <span>Gets random results</span>
-                </li>
-                <li className="flex items-start gap-2.5 text-zinc-700 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-zinc-200/70 border border-zinc-300 flex items-center justify-center shrink-0 mt-0.5 text-zinc-600">
-                    <span className="text-xs font-bold leading-none">•</span>
-                  </div>
-                  <span>Struggles to turn attention into opportunities</span>
-                </li>
-              </ul>
-            </div>
-          </motion.div>
-
-          {/* Card 2: THE GROWTH CREATOR */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
-            className="bg-black text-white border border-zinc-800 rounded-2xl sm:rounded-3xl p-6 sm:p-7 md:p-8 flex flex-col justify-between relative shadow-xl shadow-black/10 ring-1 ring-black/5"
-          >
-            <div>
-              <div className="mb-4 sm:mb-5">
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-blue-400 block mb-1">
-                  Approach B
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                  THE GROWTH CREATOR
-                </h3>
-                <p className="text-zinc-300 text-sm sm:text-[15px] mt-1 font-medium">
-                  Creates with a clear system.
-                </p>
-              </div>
-
-              <ul className="space-y-3 sm:space-y-3.5 pt-4 border-t border-zinc-800">
-                <li className="flex items-start gap-2.5 text-zinc-100 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0 mt-0.5 text-blue-400">
-                    <Check className="w-3 h-3" strokeWidth={3} />
-                  </div>
-                  <span>Knows what their audience wants</span>
-                </li>
-                <li className="flex items-start gap-2.5 text-zinc-100 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0 mt-0.5 text-blue-400">
-                    <Check className="w-3 h-3" strokeWidth={3} />
-                  </div>
-                  <span>Creates with purpose</span>
-                </li>
-                <li className="flex items-start gap-2.5 text-zinc-100 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0 mt-0.5 text-blue-400">
-                    <Check className="w-3 h-3" strokeWidth={3} />
-                  </div>
-                  <span>Builds authority consistently</span>
-                </li>
-                <li className="flex items-start gap-2.5 text-zinc-100 text-sm sm:text-[15px] leading-snug">
-                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0 mt-0.5 text-blue-400">
-                    <Check className="w-3 h-3" strokeWidth={3} />
-                  </div>
-                  <span>Turns attention into opportunities</span>
-                </li>
-              </ul>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Below Cards: Question & CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="text-center"
-        >
-          <p className="text-base sm:text-lg md:text-xl font-bold text-zinc-950 mb-4 sm:mb-5">
-            Which one do you want to be?
           </p>
+        </div>
 
+        {/* Two Compact Side-by-Side Cards on Desktop, Stacked on Mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-[960px] mx-auto">
+          
+          {/* CARD A: THE CONTENT GRINDER */}
+          <div className="bg-white border border-[#D9D9D9] rounded-[20px] sm:rounded-[24px] p-6 sm:p-7 md:p-8 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+            <div>
+              <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.12em] uppercase text-[#707070] block mb-1">
+                APPROACH A
+              </span>
+              <h3 className="text-[20px] sm:text-[22px] md:text-[24px] font-bold tracking-tight text-[#080808]">
+                THE CONTENT GRINDER
+              </h3>
+              <p className="text-[#707070] text-[14px] sm:text-[15px] mt-1 font-medium">
+                Posts whenever they can.
+              </p>
+
+              <div className="pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-[#D9D9D9]">
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2.5 text-[#080808] text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#707070] flex-shrink-0" />
+                    <span>Posts without a clear plan</span>
+                  </li>
+                  <li className="flex items-center gap-2.5 text-[#080808] text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#707070] flex-shrink-0" />
+                    <span>Chases trends</span>
+                  </li>
+                  <li className="flex items-center gap-2.5 text-[#080808] text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#707070] flex-shrink-0" />
+                    <span>Gets random results</span>
+                  </li>
+                  <li className="flex items-center gap-2.5 text-[#080808] text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#707070] flex-shrink-0" />
+                    <span>Struggles to turn attention into opportunities</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD B: THE GROWTH CREATOR */}
+          <div className="bg-[#080808] text-white border border-[#E50914] rounded-[20px] sm:rounded-[24px] p-6 sm:p-7 md:p-8 flex flex-col justify-between shadow-[0_4px_25px_rgba(229,9,20,0.12)] relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.12em] uppercase text-[#E50914] block">
+                  APPROACH B
+                </span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#E50914] px-2.5 py-0.5 rounded-full">
+                  Recommended System
+                </span>
+              </div>
+              <h3 className="text-[20px] sm:text-[22px] md:text-[24px] font-bold tracking-tight text-white">
+                THE GROWTH CREATOR
+              </h3>
+              <p className="text-zinc-400 text-[14px] sm:text-[15px] mt-1 font-medium">
+                Creates with a clear system.
+              </p>
+
+              <div className="pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-white/10">
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2.5 text-zinc-100 text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <div className="w-4 h-4 rounded-full bg-[#E50914]/20 border border-[#E50914]/50 flex items-center justify-center flex-shrink-0 text-[#E50914]">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    </div>
+                    <span>Knows what their audience wants</span>
+                  </li>
+                  <li className="flex items-center gap-2.5 text-zinc-100 text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <div className="w-4 h-4 rounded-full bg-[#E50914]/20 border border-[#E50914]/50 flex items-center justify-center flex-shrink-0 text-[#E50914]">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    </div>
+                    <span>Creates with purpose</span>
+                  </li>
+                  <li className="flex items-center gap-2.5 text-zinc-100 text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <div className="w-4 h-4 rounded-full bg-[#E50914]/20 border border-[#E50914]/50 flex items-center justify-center flex-shrink-0 text-[#E50914]">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    </div>
+                    <span>Builds authority consistently</span>
+                  </li>
+                  <li className="flex items-center gap-2.5 text-zinc-100 text-[14px] sm:text-[15px] font-medium leading-tight">
+                    <div className="w-4 h-4 rounded-full bg-[#E50914]/20 border border-[#E50914]/50 flex items-center justify-center flex-shrink-0 text-[#E50914]">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    </div>
+                    <span>Turns attention into opportunities</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* CTA Underneath */}
+        <div className="text-center mt-7 sm:mt-8">
           <button
             onClick={handleOpenAudit}
-            className="inline-flex items-center justify-center gap-2.5 bg-black hover:bg-zinc-800 text-white font-black text-sm sm:text-base px-7 sm:px-9 py-3.5 sm:py-4 rounded-full transition-all duration-200 active:scale-95 shadow-xl shadow-black/10 cursor-pointer touch-manipulation min-h-[48px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#080808] text-white hover:bg-zinc-800 px-7 h-[50px] sm:h-[52px] min-h-[50px] py-3.5 rounded-full text-[14px] sm:text-[15px] font-bold transition-all duration-200 cursor-pointer active:scale-95 touch-manipulation shadow-sm"
           >
             <span>Build My Growth Plan</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#E50914]" />
           </button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

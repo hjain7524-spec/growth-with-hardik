@@ -1,43 +1,43 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowDown, Sparkles, CheckCircle } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 
-interface Step {
-  stepNumber: string;
+interface ProcessStep {
+  number: string;
   title: string;
   description: string;
 }
 
-const STEPS: Step[] = [
+const PROCESS_STEPS: ProcessStep[] = [
   {
-    stepNumber: '01',
-    title: 'Discovery Call',
-    description: 'We understand your business, audience, goals, competitors, and current challenges.'
+    number: '01',
+    title: 'Audit & Research',
+    description: 'We audit your account, audience demographics, competitors, and historical performance to diagnose bottlenecks.'
   },
   {
-    stepNumber: '02',
-    title: 'Growth Audit',
-    description: 'We audit your content, branding, competitors, and identify growth opportunities.'
+    number: '02',
+    title: 'Strategy & Positioning',
+    description: 'We craft your unique brand positioning, core content pillars, and profile conversion architecture.'
   },
   {
-    stepNumber: '03',
-    title: 'Custom Strategy',
-    description: 'We build a tailored content and growth strategy designed specifically for your brand.'
+    number: '03',
+    title: 'Content System',
+    description: 'We build tailored high-retention frameworks, hook libraries, and predictable ideation workflows.'
   },
   {
-    stepNumber: '04',
-    title: 'Content Production',
-    description: 'Our team creates high-quality content optimized for attention, engagement, and conversions.'
+    number: '04',
+    title: 'Execution',
+    description: 'Our team handles end-to-end production—from script refinement and high-pace video editing to motion design.'
   },
   {
-    stepNumber: '05',
-    title: 'Publishing & Optimization',
-    description: 'We publish strategically, monitor performance, and optimize continuously using data.'
+    number: '05',
+    title: 'Optimization',
+    description: 'We track retention curves, profile visit conversions, and algorithmic signals weekly to compound results.'
   },
   {
-    stepNumber: '06',
-    title: 'Scale & Growth',
-    description: 'As your audience grows, we refine the strategy to generate more leads, authority, and revenue.'
+    number: '06',
+    title: 'Growth & Reporting',
+    description: 'Transparent performance tracking, follower-to-lead reporting, and recurring strategy sessions.'
   }
 ];
 
@@ -49,106 +49,82 @@ export const GrowthSystem: React.FC<GrowthSystemProps> = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section id="process" className="py-14 sm:py-20 md:py-28 bg-black text-white relative overflow-hidden px-5 sm:px-6 md:px-8 border-t border-zinc-900">
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[600px] h-[500px] sm:h-[600px] bg-blue-600/10 rounded-full blur-[160px] pointer-events-none" />
-
-      <div className="max-w-4xl mx-auto relative z-10 text-center">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-8 sm:mb-12"
-        >
-          <div className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 font-bold text-[12px] sm:text-xs tracking-[0.14em] uppercase mb-2.5 sm:mb-3.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>OUR PROCESS</span>
+    <section 
+      id="process" 
+      className="relative w-full bg-[#080808] text-white py-11 md:py-16 border-b border-[#292929]"
+      aria-label="How We Work: The Growth System"
+    >
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-6 md:px-8">
+        {/* Header Block */}
+        <div className="text-center mb-7 sm:mb-9 flex flex-col items-center">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+            <span className="text-[12px] sm:text-[13px] font-semibold tracking-[0.08em] uppercase text-zinc-400">
+              OUR PROCESS
+            </span>
           </div>
-          <h2 className="text-[32px] sm:text-4xl md:text-5xl lg:text-[50px] font-black tracking-tight text-white mb-2 sm:mb-3.5 leading-[1.1]">
+
+          {/* Heading */}
+          <h2 className="text-[32px] sm:text-[38px] md:text-[44px] lg:text-[48px] font-bold tracking-tight text-white leading-[1.05]">
             How We Work
           </h2>
-          <p className="text-gray-400 text-[13.5px] sm:text-base font-normal max-w-[310px] sm:max-w-xl mx-auto leading-[1.38] sm:leading-[1.5]">
+
+          {/* Supporting Text */}
+          <p className="mt-2.5 text-[16px] sm:text-[17px] text-[#707070] font-normal leading-normal max-w-[550px] mx-auto">
             From strategy to execution, here's the simple process we use to help your brand grow consistently.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Outer Premium Glassmorphic Container Card */}
-        <div className="bg-zinc-950/80 border border-zinc-800/80 rounded-[1.5rem] sm:rounded-[2.25rem] p-5 sm:p-8 md:p-10 shadow-2xl backdrop-blur-2xl">
-          {/* Single Expandable Toggle Button */}
-          <div className="flex justify-center">
-            <motion.button
+        {/* Compact Expandable Component */}
+        <div className="max-w-[820px] mx-auto bg-[#0D0D0D] border border-[#292929] rounded-[20px] sm:rounded-[24px] overflow-hidden">
+          <div className="p-6 sm:p-8 flex flex-col items-center text-center">
+            <button
+              type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative inline-flex items-center gap-2.5 sm:gap-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-blue-500/50 text-white font-bold text-[15px] sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-xl shadow-black/40 active:scale-95 touch-manipulation cursor-pointer min-h-[48px] sm:min-h-[52px]"
+              aria-expanded={isExpanded}
+              className="inline-flex items-center justify-center gap-2.5 bg-white text-[#080808] hover:bg-zinc-100 rounded-full h-[50px] sm:h-[52px] min-h-[50px] py-3.5 px-7 text-[14px] sm:text-[15px] font-bold transition-all duration-200 active:scale-95 cursor-pointer touch-manipulation select-none"
             >
               <span>{isExpanded ? 'Hide Growth System' : 'View Our Growth System'}</span>
-              <motion.div
-                animate={{ rotate: isExpanded ? 180 : 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-blue-600 transition-colors"
-              >
-                <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </motion.div>
-            </motion.button>
+              <ArrowDown className={`w-4 h-4 text-[#080808] transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+            </button>
+
+            {!isExpanded && (
+              <p className="mt-3 text-[13px] text-[#707070] font-medium">
+                6 structured phases designed for scalable creator brands
+              </p>
+            )}
           </div>
 
-          {/* Accordion Expandable Vertical Timeline */}
-          <AnimatePresence>
+          {/* Expandable Process Steps */}
+          <AnimatePresence initial={false}>
             {isExpanded && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="overflow-hidden"
               >
-                <div className="pt-8 sm:pt-12 pb-2">
-                  {/* Vertical Timeline Container */}
-                  <div className="relative max-w-2xl mx-auto flex flex-col items-center">
-                    {/* Background Vertical Connecting Line */}
-                    <div className="absolute top-6 bottom-6 w-0.5 bg-gradient-to-b from-blue-600 via-indigo-500/50 to-blue-600/10 z-0" />
-
-                    {/* Steps List */}
-                    {STEPS.map((step, idx) => (
-                      <React.Fragment key={step.stepNumber}>
-                        {/* Step Card */}
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.35, delay: idx * 0.05 }}
-                          className="relative z-10 w-full bg-zinc-900/90 hover:bg-zinc-900 border border-zinc-800 hover:border-blue-500/40 p-5 sm:p-6 md:p-7 rounded-2xl shadow-xl transition-all duration-300 group text-left backdrop-blur-xl"
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-2.5">
-                            <span className="inline-flex items-center gap-1.5 text-blue-400 font-bold text-[11px] sm:text-xs tracking-[0.14em] uppercase bg-blue-500/10 border border-blue-500/20 px-2.5 py-0.5 rounded-full w-fit">
-                              <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                              STEP {step.stepNumber}
-                            </span>
-                          </div>
-
-                          <h3 className="text-lg sm:text-xl md:text-2xl font-black text-white mb-1 tracking-tight group-hover:text-blue-400 transition-colors">
+                <div className="px-5 sm:px-8 pb-6 sm:pb-8 border-t border-[#292929]">
+                  <div className="divide-y divide-[#292929]">
+                    {PROCESS_STEPS.map((step) => (
+                      <div
+                        key={step.number}
+                        className="py-4 sm:py-5 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-5"
+                      >
+                        <span className="text-xs sm:text-sm font-bold font-mono tracking-wider text-[#E50914] flex-shrink-0 mt-0.5">
+                          {step.number}
+                        </span>
+                        <div className="flex-1">
+                          <h3 className="text-[16px] sm:text-[17px] font-bold text-white tracking-tight mb-1">
                             {step.title}
                           </h3>
-
-                          <p className="text-gray-400 font-normal text-xs sm:text-sm md:text-[15px] leading-[1.5]">
+                          <p className="text-zinc-400 text-[14px] leading-relaxed">
                             {step.description}
                           </p>
-                        </motion.div>
-
-                        {/* Down Arrow Connecting Icon between steps */}
-                        {idx < STEPS.length - 1 && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.25, delay: idx * 0.05 + 0.04 }}
-                            className="my-3 sm:my-3.5 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-900 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-lg shadow-blue-500/10"
-                          >
-                            <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
-                          </motion.div>
-                        )}
-                      </React.Fragment>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>

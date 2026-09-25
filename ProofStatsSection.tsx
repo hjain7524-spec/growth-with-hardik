@@ -1,74 +1,70 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface StatItem {
-  id: string;
+interface ProofStat {
   value: string;
-  labelLine1: string;
-  labelLine2?: string;
+  label: string;
 }
 
-const STATS_DATA: StatItem[] = [
+const PROOF_STATS: ProofStat[] = [
   {
-    id: 'followers',
     value: '1M+',
-    labelLine1: 'Followers',
-    labelLine2: 'Generated'
+    label: 'Followers Generated',
   },
   {
-    id: 'views',
     value: '700M+',
-    labelLine1: 'Views',
-    labelLine2: 'Generated'
+    label: 'Views Generated',
   },
   {
-    id: 'leads',
     value: '7K+',
-    labelLine1: 'Leads',
-    labelLine2: 'Generated'
+    label: 'Leads Generated',
   },
   {
-    id: 'creators',
     value: '150+',
-    labelLine1: 'Creators',
-    labelLine2: 'Worked With'
+    label: 'Creators Worked With',
   }
 ];
 
 export const ProofStatsSection: React.FC = () => {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-black text-white relative overflow-hidden border-t border-zinc-900/80 selection:bg-blue-600/30 selection:text-white">
-      {/* Subtle radial ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-blue-600/5 rounded-full blur-[130px] pointer-events-none" />
+    <section 
+      id="proof-results"
+      className="relative w-full bg-[#080808] text-white py-11 md:py-16 border-b border-[#292929]"
+      aria-label="Verified results and credibility metrics"
+    >
+      <div className="w-full max-w-[1200px] mx-auto px-5 sm:px-6 md:px-8">
+        {/* Eyebrow Header */}
+        <div className="flex items-center gap-2 mb-6 sm:mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+          <span className="text-[12px] sm:text-[13px] font-semibold tracking-[0.08em] uppercase text-zinc-400">
+            PROVEN TRACK RECORD · VERIFIED IMPACT
+          </span>
+        </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
-        {/* 2x2 Grid on Mobile, 4-Column on Desktop */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4 sm:gap-x-8 sm:gap-y-10 text-center">
-          {STATS_DATA.map((stat, index) => (
-            <motion.div
-              key={stat.id}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="flex flex-col items-center justify-center"
-            >
-              {/* Big dominant bold number */}
-              <div className="text-[34px] min-[360px]:text-[40px] min-[400px]:text-[44px] sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-black tracking-tight text-white leading-none whitespace-nowrap">
-                <span className="bg-gradient-to-b from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent">
+        {/* Elegant Compact 2x2 Data Panel with Thin Borders */}
+        <div className="rounded-[20px] border border-[#292929] overflow-hidden bg-[#0A0A0A]/60">
+          <div className="grid grid-cols-2 divide-x divide-y divide-[#292929]">
+            {PROOF_STATS.map((stat, idx) => (
+              <motion.div
+                key={stat.value}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-20px' }}
+                transition={{ duration: 0.4, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                className="p-5 sm:p-7 md:p-8 flex flex-col justify-center"
+              >
+                {/* Number: 42-52px desktop, 34-40px mobile */}
+                <div className="text-[34px] sm:text-[38px] md:text-[44px] lg:text-[48px] font-bold tracking-tight text-white leading-none">
                   {stat.value}
-                </span>
-              </div>
+                </div>
 
-              {/* Smaller clean label */}
-              <div className="mt-2 sm:mt-2.5 text-xs sm:text-sm md:text-base font-medium text-gray-400 tracking-tight leading-snug">
-                <span>{stat.labelLine1}</span>
-                {stat.labelLine2 && (
-                  <span className="block">{stat.labelLine2}</span>
-                )}
-              </div>
-            </motion.div>
-          ))}
+                {/* Label: 14-16px */}
+                <div className="mt-2 text-zinc-400 text-[13px] sm:text-[14px] md:text-[15px] font-medium leading-normal">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

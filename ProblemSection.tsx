@@ -1,142 +1,157 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 
 interface ProblemItem {
-  id: string;
+  number: string;
   title: string;
-  content: string;
+  description: string;
 }
 
-const PROBLEM_ITEMS: ProblemItem[] = [
+const PROBLEMS: ProblemItem[] = [
   {
-    id: 'posting-not-growing',
+    number: '01',
     title: 'Posting consistently but not growing?',
-    content: "You're creating content regularly, but your reach, followers, or engagement aren't moving."
+    description: "You're creating content regularly, but your reach, followers, or engagement aren't moving."
   },
   {
-    id: 'views-not-followers',
+    number: '02',
     title: 'Getting views but not followers?',
-    content: "Your content gets attention, but viewers aren't becoming part of your audience."
+    description: "Your reels catch attention, but profile visitors swipe away without following because your positioning, profile authority, and hook-to-follow payoff aren't dialed in."
   },
   {
-    id: 'followers-not-clients',
+    number: '03',
     title: 'Growing followers but not getting clients?',
-    content: "Your audience is growing, but your Instagram isn't translating that attention into enquiries or opportunities."
+    description: "You have an audience that watches and likes, but without a clear conversion engine and DM qualification funnel, your attention fails to turn into qualified pipeline and paying clients."
   },
   {
-    id: 'dont-know-content',
+    number: '04',
     title: "Don't know what content to create?",
-    content: "You're constantly searching for ideas instead of having a clear content system."
+    description: "You are stuck in perpetual guesswork every morning without a predictable content matrix, repeatable high-retention formats, or audience-validated content pillars."
   },
   {
-    id: 'spending-too-much-time',
+    number: '05',
     title: 'Spending too much time creating content?',
-    content: 'Content takes too much time and effort without producing consistent results.'
+    description: "You are burning 20+ hours a week scripting, filming, and editing from scratch instead of running your core business and letting a dedicated growth system handle execution."
   }
 ];
 
 export const ProblemSection: React.FC = () => {
-  // First accordion open by default
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const toggleAccordion = (index: number) => {
-    setOpenIndex(prevIndex => (prevIndex === index ? null : index));
+  const toggleItem = (index: number) => {
+    setOpenIndex(prev => (prev === index ? null : index));
   };
 
   return (
-    <section id="problem" className="py-12 sm:py-16 md:py-24 bg-black text-white relative overflow-hidden px-5 sm:px-6 md:px-8 border-t border-zinc-900">
-      {/* Subtle background ambient radial lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
+    <section 
+      id="problem" 
+      className="relative w-full bg-[#080808] text-white py-11 md:py-16 border-b border-[#292929]"
+      aria-label="Core bottlenecks and challenges in Instagram growth"
+    >
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-5 sm:px-6 md:px-8">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-8 sm:mb-10">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+            <span className="text-[12px] sm:text-[13px] font-semibold tracking-[0.08em] uppercase text-zinc-400">
+              BOTTLENECK DIAGNOSIS
+            </span>
+          </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-6 sm:mb-8 md:mb-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-[28px] min-[360px]:text-[32px] sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-2.5 sm:mb-3 leading-[1.1] sm:leading-[1.12] max-w-[340px] sm:max-w-none mx-auto"
-          >
-            Why Isn’t Your Instagram Growing?
-          </motion.h2>
+          {/* Heading */}
+          <h2 className="text-[32px] sm:text-[38px] md:text-[44px] lg:text-[48px] font-bold tracking-tight text-white leading-[1.05] max-w-[700px]">
+            <span className="block">Why Isn't Your</span>
+            <span className="block text-zinc-200">Instagram Growing?</span>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-            className="text-gray-400 text-[15px] min-[360px]:text-[16px] sm:text-base md:text-lg font-normal max-w-[340px] sm:max-w-xl mx-auto leading-[1.45] sm:leading-[1.5]"
-          >
+          {/* Subtitle */}
+          <p className="mt-2.5 text-[16px] sm:text-[17px] text-[#707070] font-normal leading-normal max-w-[550px]">
             Here are the biggest bottlenecks holding creators back.
-          </motion.p>
+          </p>
         </div>
 
-        {/* Accordion Cards Container - Clean 1-Column Layout with generous mobile sizing */}
-        <div className="space-y-3 sm:space-y-3.5 max-w-3xl mx-auto">
-          {PROBLEM_ITEMS.map((item, index) => {
+        {/* Compact Accordion List (70-90px collapsed height) */}
+        <div className="max-w-[820px] mx-auto space-y-2.5 sm:space-y-3">
+          {PROBLEMS.map((item, index) => {
             const isOpen = openIndex === index;
 
             return (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.02 }}
-                className={`rounded-2xl transition-all duration-300 border ${
-                  isOpen
-                    ? 'bg-zinc-900/90 border-blue-500/40 shadow-lg shadow-blue-950/20'
-                    : 'bg-zinc-950/80 hover:bg-zinc-900/70 border-zinc-800/80 hover:border-zinc-700/80'
-                }`}
+              <div
+                key={item.number}
+                className={`
+                  rounded-[18px] sm:rounded-[20px]
+                  transition-all duration-200 ease-out
+                  border overflow-hidden
+                  ${isOpen 
+                    ? 'bg-[#111111] border-[#E50914] shadow-[0_4px_20px_rgba(229,9,20,0.12)]' 
+                    : 'bg-[#0D0D0D] hover:bg-[#121212] border-[#292929]'
+                  }
+                `}
               >
                 <button
                   type="button"
-                  onClick={() => toggleAccordion(index)}
+                  onClick={() => toggleItem(index)}
                   aria-expanded={isOpen}
-                  className="w-full text-left px-4.5 sm:px-6 py-4 sm:py-4.5 flex items-center justify-between gap-3 sm:gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl cursor-pointer group min-h-[56px] sm:min-h-[60px] touch-manipulation"
+                  className="w-full text-left px-4 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between gap-3 sm:gap-4 cursor-pointer select-none touch-manipulation group min-h-[64px] sm:min-h-[72px]"
                 >
-                  <div className="flex items-center gap-3 sm:gap-4 pr-2">
-                    <span className={`text-[13.5px] sm:text-sm font-extrabold transition-colors ${isOpen ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-400'}`}>
-                      0{index + 1}
+                  {/* Left: Number + Title */}
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 pr-2">
+                    <span 
+                      className={`
+                        text-xs sm:text-sm font-bold font-mono tracking-wider transition-colors duration-200 flex-shrink-0
+                        ${isOpen ? 'text-[#E50914]' : 'text-zinc-500 group-hover:text-zinc-400'}
+                      `}
+                    >
+                      {item.number}
                     </span>
-                    <h3 className={`text-[15.5px] min-[360px]:text-[16.5px] sm:text-lg font-bold tracking-tight transition-colors leading-snug ${isOpen ? 'text-white' : 'text-gray-200 group-hover:text-white'}`}>
+
+                    <h3 
+                      className={`
+                        text-[15px] sm:text-[17px] font-bold tracking-tight leading-snug transition-colors duration-200 truncate sm:whitespace-normal
+                        ${isOpen ? 'text-white' : 'text-zinc-200 group-hover:text-white'}
+                      `}
+                    >
                       {item.title}
                     </h3>
                   </div>
 
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className={`flex-shrink-0 w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors ${
-                      isOpen
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-zinc-800/80 text-gray-400 group-hover:bg-zinc-700 group-hover:text-white'
-                    }`}
+                  {/* Right: Compact Icon Button */}
+                  <div 
+                    className={`
+                      w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center border transition-all duration-200
+                      ${isOpen
+                        ? 'bg-[#E50914] border-[#E50914] text-white'
+                        : 'bg-white/[0.04] border-[#292929] text-zinc-400 group-hover:text-white'
+                      }
+                    `}
                   >
-                    <ChevronDown className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-                  </motion.div>
+                    <ArrowDown className={`w-3.5 h-3.5 stroke-[2.2] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                  </div>
                 </button>
 
+                {/* Open State Body */}
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4.5 sm:px-6 pb-4 sm:pb-5 pt-1.5 text-gray-300 font-normal text-[14.5px] sm:text-base leading-[1.6] pl-9 sm:pl-14 pr-4.5 sm:pr-8 border-t border-zinc-800/60 mt-0.5">
-                        <p className="max-w-2xl text-gray-300">
-                          {item.content}
-                        </p>
+                      <div className="px-4 sm:px-6 pb-4 pt-1">
+                        <div className="pt-2.5 border-t border-white/[0.08] ml-7 sm:ml-8">
+                          <p className="text-zinc-300 text-[14px] sm:text-[15px] font-normal leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             );
           })}
         </div>
