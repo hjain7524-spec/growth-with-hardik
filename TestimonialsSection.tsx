@@ -15,29 +15,74 @@ interface ReviewItem {
 const REVIEWS: ReviewItem[] = [
   {
     id: 'r1',
-    quoteTitle: '“Exceptional Support”',
-    content: 'Hardik helped me build a structured content strategy that supported my growth to over 200K followers within 12 months.',
-    author: 'Tanya Saharawat',
-    role: 'Yoga Creator & Influencer',
+    quoteTitle: '“Didn\'t expect my reels to take off like this”',
+    content: 'I was putting out yoga tutorials for almost eight months with barely 200 views on each reel. Hardik told me to stop doing long intros and fixed my opening hooks in the first 2 seconds. In three weeks my reach completely opened up, and my weekend workshop batches now fill up through Instagram itself.',
+    author: 'Tanya Sahrawat',
+    role: 'Yoga Creator & Teacher, Delhi',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=160&h=160&q=80',
     rating: 5
   },
   {
     id: 'r2',
-    quoteTitle: '“Outstanding”',
-    content: 'Hardik helped us streamline our content and improve consistency across platforms.',
-    author: 'Himadari Foundation',
-    role: 'Non-Profit & Foundation',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=160&h=160&q=80',
+    quoteTitle: '“People actually walk in showing us our reels”',
+    content: 'When you\'re running a café, you barely get five minutes to breathe, let alone film aesthetic reels. Hardik came in with very simple video ideas showing our cold brew and behind-the-counter coffee prep that were easy for our staff to shoot. Last month we had college kids coming in specifically asking for the iced mocha they saw on our page.',
+    author: 'Rohan Mehta',
+    role: 'Co-owner, The Daily Roast Café, Bangalore',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=160&h=160&q=80',
     rating: 5
   },
   {
     id: 'r3',
-    quoteTitle: '“Value Addition”',
-    content: 'Our engagement metrics improved significantly within the first 60 days of working together.',
-    author: 'Aman Sharma',
-    role: 'Tech & Productivity Creator',
+    quoteTitle: '“Finally found someone who gets B2B tech without the cringe”',
+    content: 'Most growth guys just post generic motivational stuff that looks silly for a SaaS company. Hardik actually sat down to understand our developer tooling and helped me write founder-led posts that sound like my real voice. We got two enterprise pilot signups directly from people who discovered us through our breakdown carousels.',
+    author: 'Arjun Kapoor',
+    role: 'Founder & CEO, PulseStack Technologies',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r4',
+    quoteTitle: '“Our festive drop sold out purely through DMs”',
+    content: 'We used to spend on basic photoshoot posts that just sat on our grid with a few likes from friends. Hardik pushed us to show the handblock printing process and quick styling tips for kurtas instead. The response was crazy — our customer inquiries on WhatsApp doubled and we cleared our entire festive stock in four days.',
+    author: 'Ananya Sharma',
+    role: 'Founder, Label Ananya, Jaipur',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r5',
+    quoteTitle: '“Took the headache out of filming myself”',
+    content: 'I used to dread sitting in front of the camera because I always stumbled through long scripts. Hardik trimmed everything into three clean bullet points and paced the cuts so naturally that even my friends thought I hired a full production studio. It’s helped me build solid credibility with angel investors who follow my updates now.',
+    author: 'Kunal Bansal',
+    role: 'Co-founder, ShipFleet Logistics, Gurgaon',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r6',
+    quoteTitle: '“Direct weekend bookings went up noticeably”',
+    content: 'Our resort photographs well, but our Instagram looked too formal and quiet. Hardik advised us to capture spontaneous moments — sunset pool views, morning breakfast setups, and guests chilling out. It made the stay feel authentic, and we saw a clear jump in couples messaging us for weekend rates directly instead of going through OTAs.',
+    author: 'Neha Gupta',
+    role: 'General Manager, Villa Nirvana Boutique Stays, Goa',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r7',
+    quoteTitle: '“Very straightforward guy, no fluff or false promises”',
+    content: 'We’ve had our offline furniture business for fifteen years and always felt social media was a waste of money. What I liked about Hardik is that he didn\'t give me big lectures about algorithms; he just showed practical videos of our solid wood dining tables being crafted. We’re actually getting inquiries from architects and homeowners across NCR now.',
+    author: 'Aditya Malhotra',
+    role: 'Managing Partner, Malhotra Furnishings, Delhi',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&h=160&q=80',
+    rating: 5
+  },
+  {
+    id: 'r8',
+    quoteTitle: '“Saved me at least 15 hours of editing every week”',
+    content: 'Scripting finance content is already exhausting, and spending half my Sunday doing captions and zooms was burning me out. Hardik\'s edits made my videos way sharper and kept people watching past the 15-second mark. My follower count has been growing steadily, but honestly, having my weekends back was the biggest win.',
+    author: 'Riya Verma',
+    role: 'Personal Finance Creator (@financewithriya)',
+    avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=160&h=160&q=80',
     rating: 5
   }
 ];

@@ -42,7 +42,7 @@ interface StillNotSureSectionProps {
 }
 
 export const StillNotSureSection: React.FC<StillNotSureSectionProps> = ({ onRequestAudit }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleItem = (index: number) => {
     setOpenIndex(prev => (prev === index ? null : index));
